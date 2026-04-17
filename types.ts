@@ -22,7 +22,7 @@ export interface TaobSignUp {
   phoneNumber: string;
   instagramHandle: string;
   paymentProofUrl?: string;
-  status: 'pending' | 'confirmed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'delivered';
   note?: string;
   timestamp: number;
 }

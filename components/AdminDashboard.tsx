@@ -989,7 +989,6 @@ const StatusDropdown = ({ status, onChange, className = "" }: { status: string, 
         <option value="" className="bg-white text-stone-400 font-bold italic">No Status</option>
         <option value="pending" className="bg-amber-100 text-amber-900 font-bold">Pending</option>
         <option value="confirmed" className="bg-emerald-100 text-emerald-900 font-bold">Confirmed</option>
-        <option value="paid" className="bg-rose-100 text-rose-900 font-bold">Paid</option>
         <option value="delivered" className="bg-stone-200 text-stone-900 font-bold">Delivered</option>
       </select>
       <div className={`absolute right-2 md:right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-90 ${status && status !== 'none' && status !== 'pending' ? 'text-white' : 'text-stone-400'}`}>
