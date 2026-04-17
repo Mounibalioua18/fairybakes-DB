@@ -85,6 +85,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .select('*')
+        .order('eventDate', { ascending: false })
         .order('created_at', { ascending: false })
         .limit(100);
         
