@@ -1006,6 +1006,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       <div 
                         key={signup.id} 
                         className={`grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-1.5 items-center border-b border-stone-50/50 transition-all cursor-pointer group ${getRowBgColor(signup.status)}`}
+                        onClick={() => setSelectedTaob(signup)}
                       >
                         <div className="col-span-1 md:col-span-3 flex items-center gap-3">
                           <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 text-[9px] font-bold border border-stone-200 flex-shrink-0">
@@ -1052,6 +1053,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                         </div>
 
                         <div className="hidden md:flex col-span-1 text-right items-center justify-end gap-3" onClick={(e) => e.stopPropagation()}>
+                          <button onClick={() => setSelectedTaob(signup)} className="text-stone-300 hover:text-rose-400 transition-colors p-1">
+                            <Maximize2 size={13} />
+                          </button>
                           <button onClick={() => deleteTaobSignUp(signup.id)} className="text-stone-200 hover:text-red-400 transition-colors p-1">
                             <Trash2 size={13} />
                           </button>
