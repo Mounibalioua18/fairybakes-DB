@@ -232,13 +232,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       const fileName = `${crypto.randomUUID()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
-        .from('inspiration')
+        .from('inspirations')
         .upload(fileName, file);
         
       if (uploadError) throw uploadError;
       
       const { data: { publicUrl } } = supabase.storage
-        .from('inspiration')
+        .from('inspirations')
         .getPublicUrl(fileName);
       
       const newContent = {
@@ -246,9 +246,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         images: [...noteContent.images, publicUrl]
       };
       setNoteContent(newContent);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload failed:', error);
-      alert('Failed to upload image. Please try again.');
+      alert(`Failed to upload image: ${error.message || 'Please try again.'}`);
     } finally {
       setIsUploadingImage(false);
       if (fileInputRef.current) fileInputRef.current.value = '';

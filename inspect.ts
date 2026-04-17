@@ -5,11 +5,8 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function inspect() {
-  const { data: orders } = await supabase.from('orders').select('*').limit(3);
-  console.log("ORDERS:", JSON.stringify(orders, null, 2));
-
-  const { data: galleries } = await supabase.from('galleries').select('*').limit(3);
-  console.log("GALLERIES:", JSON.stringify(galleries, null, 2));
+  const { data: buckets, error } = await supabase.storage.listBuckets();
+  console.log("BUCKETS:", JSON.stringify(buckets, null, 2), error);
 }
 
 inspect();

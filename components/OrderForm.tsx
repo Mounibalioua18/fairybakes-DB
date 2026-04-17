@@ -65,13 +65,13 @@ export const OrderForm: React.FC = () => {
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
         
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('inspiration')
+          .from('inspirations')
           .upload(fileName, selectedFile);
           
         if (uploadError) throw uploadError;
         
         const { data: { publicUrl } } = supabase.storage
-          .from('inspiration')
+          .from('inspirations')
           .getPublicUrl(fileName);
         
         // 2. Create entry in 'galleries' collection
