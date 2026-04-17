@@ -936,11 +936,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                     {order.eventDate ? new Date(order.eventDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : 'N/A'}
                                   </span>
                                 </div>
-                                <div className="md:hidden flex items-center gap-2 mt-0.5 overflow-hidden">
-                                   <span className="text-xs font-serif font-bold text-stone-900 truncate max-w-[120px]">{order.customerName}</span>
-                                   {(galleryImages[order.id] || (order.inspirationId && galleryImages[order.inspirationId])) && <ImageIcon size={10} className="text-rose-400" />}
-                                   {hasNoteContent && <StickyNote size={10} className="text-amber-500" />}
-                                </div>
+                                <div className="md:hidden flex items-start gap-2 mt-0.5 overflow-hidden">
+                                   <span className="text-xs font-serif font-bold text-stone-900 line-clamp-2 max-w-[140px] leading-tight">{order.customerName}</span>
+                                   <div className="flex items-center gap-1.5 mt-0.5">
+                                     {(galleryImages[order.id] || (order.inspirationId && galleryImages[order.inspirationId])) && <ImageIcon size={10} className="text-rose-400 flex-shrink-0" />}
+                                     {hasNoteContent && <StickyNote size={10} className="text-amber-500 flex-shrink-0" />}
+                                   </div>
+                                 </div>
                               </div>
 
                               <div className="hidden md:flex col-span-3 items-center gap-3">
@@ -948,11 +950,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                   {order.customerName ? order.customerName.charAt(0) : '?'}
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-serif font-bold text-stone-900 truncate">{order.customerName}</span>
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-xs font-serif font-bold text-stone-900 line-clamp-2 leading-tight py-0.5">{order.customerName}</span>
                                     <button 
                                       onClick={(e) => openNoteEditor(e, order)}
-                                      className={`text-[8px] uppercase tracking-widest font-black transition-all ${hasNoteContent ? 'text-amber-600' : 'text-stone-300 opacity-0 group-hover:opacity-100 hover:text-amber-500'}`}
+                                      className={`text-[8px] uppercase tracking-widest font-black transition-all pt-1 ${hasNoteContent ? 'text-amber-600' : 'text-stone-300 opacity-0 group-hover:opacity-100 hover:text-amber-500'}`}
                                     >
                                       {hasNoteContent ? <StickyNote size={10} /> : 'note'}
                                     </button>
@@ -1023,7 +1025,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                           <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 text-[9px] font-bold border border-stone-200 flex-shrink-0">
                             {signup.customerName ? signup.customerName.charAt(0) : '?'}
                           </div>
-                          <span className="text-xs font-serif font-bold text-stone-900 truncate">{signup.customerName}</span>
+                          <span className="text-xs font-serif font-bold text-stone-900 line-clamp-2 leading-tight">{signup.customerName}</span>
                         </div>
                         
                         <div className="hidden md:flex col-span-2 items-center">
