@@ -365,9 +365,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     let filtered = taobSignUps.filter(signup => {
       const nameMatch = (signup.customerName || '').toLowerCase().includes(query);
       const handleMatch = (signup.instagramHandle || '').toLowerCase().includes(query);
-      const emailMatch = (signup.email || '').toLowerCase().includes(query);
       const phoneMatch = (signup.phoneNumber || '').toLowerCase().includes(query);
-      return nameMatch || handleMatch || emailMatch || phoneMatch;
+      return nameMatch || handleMatch || phoneMatch;
     });
     if (activeFilter !== 'all') filtered = filtered.filter(o => o.status === activeFilter);
     // TAOB doesn't use selectedMonth
@@ -851,7 +850,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <>
                 <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
                   <div className="col-span-4">Customer Profile</div>
-                  <div className="col-span-3">Email</div>
+                  <div className="col-span-3">Preuve de paiement</div>
                   <div className="col-span-2">Phone</div>
                   <div className="col-span-2">Status</div>
                   <div className="col-span-1 text-right">Actions</div>
@@ -889,7 +888,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                           </div>
                         </div>
 
-                        <div className="hidden md:block col-span-3 text-[11px] text-stone-500 truncate">{signup.email || 'N/A'}</div>
+                        <div className="hidden md:flex flex-col col-span-3 items-start justify-center">
+                          {signup.paymentProofUrl ? (
+                            <a 
+                              href={signup.paymentProofUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer" 
+                              onClick={(e) => e.stopPropagation()} 
+                              className="group relative w-10 h-10 rounded-lg border border-stone-200 overflow-hidden shadow-sm hover:border-rose-300 transition-colors"
+                            >
+                              <img src={signup.paymentProofUrl} alt="Preuve" className="w-full h-full object-cover" />
+                              <div className="absolute inset-0 bg-stone-900/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <ExternalLink size={12} className="text-white" />
+                              </div>
+                            </a>
+                          ) : (
+                            <span className="text-[10px] italic text-stone-300">Aucune preuve</span>
+                          )}
+                        </div>
                         <div className="hidden md:block col-span-2 text-[11px] text-stone-500">{signup.phoneNumber}</div>
 
                         <div className="col-span-1 md:col-span-2 py-1" onClick={(e) => e.stopPropagation()}>

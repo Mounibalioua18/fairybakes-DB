@@ -19,9 +19,9 @@ export interface TaobSignUp {
   id: string;
   created_at: string;
   customerName: string;
-  email?: string;
   phoneNumber: string;
   instagramHandle: string;
+  paymentProofUrl?: string;
   status: 'pending' | 'confirmed' | 'cancelled';
   note?: string;
   timestamp: number;
