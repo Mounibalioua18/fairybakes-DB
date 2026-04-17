@@ -377,7 +377,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const groupedOrders = useMemo(() => {
     const groups: Record<string, CakeOrder[]> = {};
     filteredOrders.forEach(order => {
-      const dateKey = order.eventDate.includes('T') ? order.eventDate.split('T')[0] : order.eventDate;
+      const safeEventDate = order.eventDate || new Date().toISOString();
+      const dateKey = safeEventDate.includes('T') ? safeEventDate.split('T')[0] : safeEventDate;
       if (!groups[dateKey]) groups[dateKey] = [];
       groups[dateKey].push(order);
     });
@@ -787,7 +788,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                 <div className="flex items-center gap-1.5">
                                   <Calendar size={10} className="text-rose-400 flex-shrink-0" />
                                   <span className="text-[10px] md:text-[11px] font-bold text-stone-600 whitespace-nowrap">
-                                    {new Date(order.eventDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                                    {order.eventDate ? new Date(order.eventDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }) : 'N/A'}
                                   </span>
                                 </div>
                                 <div className="md:hidden flex items-center gap-2 mt-0.5 overflow-hidden">
