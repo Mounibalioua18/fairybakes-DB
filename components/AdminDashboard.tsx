@@ -48,6 +48,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   });
 
   const [selectedOrder, setSelectedOrder] = useState<CakeOrder | null>(null);
+  const [selectedTaob, setSelectedTaob] = useState<any | null>(null);
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
   const monthPickerRef = useRef<HTMLDivElement>(null);
 
@@ -297,6 +298,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
   const updateTaobStatus = async (id: string, newStatus: string) => {
     setTaobSignUps(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+    if (selectedTaob?.id === id) {
+      setSelectedTaob(prev => prev ? { ...prev, status: newStatus } : null);
+    }
     try {
       const { error } = await supabase
         .from('taob_signups')
@@ -622,6 +626,110 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         </div>
       )}
 
+      {/* Modal Detail View for TAOB */}
+      {selectedTaob && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md transition-all duration-300 animate-in fade-in"
+          onClick={() => setSelectedTaob(null)}
+        >
+          <div 
+            className="bg-white w-full max-w-2xl rounded-[2.5rem] md:rounded-[3rem] shadow-2xl overflow-hidden relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              onClick={() => setSelectedTaob(null)}
+              className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full bg-stone-50 text-stone-400 hover:text-stone-900 transition-colors z-10"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="p-6 md:p-14 max-h-[90vh] overflow-y-auto scrollbar-hide">
+              {/* PROFILE HEADER */}
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-14 h-14 md:w-20 md:h-20 bg-rose-50 rounded-2xl md:rounded-[2rem] flex items-center justify-center text-rose-400 border border-rose-100 flex-shrink-0">
+                  <User size={selectedTaob.customerName ? 28 : 36} />
+                </div>
+                <div className="min-w-0 flex-1 relative">
+                  <h2 className="text-xl md:text-3xl font-serif text-stone-900 font-bold truncate leading-none mb-1">
+                    {selectedTaob.customerName || 'No Name'}
+                  </h2>
+                  <a 
+                    href={`https://instagram.com/${selectedTaob.instagramHandle}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-rose-400 flex items-center gap-1.5 font-bold text-xs md:text-base hover:text-rose-600 transition-colors truncate mt-1 w-fit"
+                  >
+                    <Instagram size={14} className="flex-shrink-0" /> @{selectedTaob.instagramHandle}
+                  </a>
+                </div>
+              </div>
+
+              {/* DETAILS GRID */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-10">
+                <DetailBox label="Phone Number" value={selectedTaob.phoneNumber || 'N/A'} />
+                <DetailBox label="Sign-up Date" value={new Date(selectedTaob.timestamp || selectedTaob.created_at || Date.now()).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} />
+              </div>
+
+              {/* PAYMENT PROOF */}
+              <div className="mb-8 md:mb-10 p-5 md:p-8 bg-stone-50 rounded-2xl md:rounded-[2rem] border border-stone-100">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Proof of Payment</span>
+                  {selectedTaob.paymentProofUrl && (
+                    <a 
+                      href={selectedTaob.paymentProofUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-stone-400 hover:text-rose-400 transition-colors flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold"
+                    >
+                      <ExternalLink size={12} /> Open Full
+                    </a>
+                  )}
+                </div>
+                
+                {selectedTaob.paymentProofUrl ? (
+                  <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner border border-stone-200 bg-white group">
+                    <img 
+                      src={selectedTaob.paymentProofUrl} 
+                      className="w-full h-full object-contain" 
+                      alt="Payment Proof"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/fff/rose?text=Image+Not+Found';
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 text-stone-300 gap-2 italic text-sm">
+                    <ImageIcon size={32} />
+                    <span>No payment proof attached.</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div className="flex flex-col gap-1 w-full md:w-auto">
+                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Registration Status</span>
+                  <StatusDropdown 
+                    type="taob"
+                    status={selectedTaob.status} 
+                    onChange={(s) => updateTaobStatus(selectedTaob.id, s)} 
+                    className="w-full md:w-48"
+                  />
+                </div>
+                <button 
+                  onClick={() => {
+                    deleteTaobSignUp(selectedTaob.id);
+                    setSelectedTaob(null);
+                  }}
+                  className="flex items-center gap-2 text-stone-300 hover:text-red-400 transition-colors text-[10px] font-bold uppercase tracking-widest md:pt-4"
+                >
+                  <Trash2 size={16} /> Delete Entry
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Login Screen */}
       {!isAuthenticated ? (
          <div className="min-h-screen flex items-center justify-center bg-[#fdfaf6] p-4">
@@ -940,7 +1048,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                         <div className="hidden md:block col-span-2 text-[11px] text-stone-500">{signup.phoneNumber}</div>
 
                         <div className="col-span-1 md:col-span-2 py-1" onClick={(e) => e.stopPropagation()}>
-                          <StatusDropdown status={signup.status} onChange={(s) => updateTaobStatus(signup.id, s)} />
+                          <StatusDropdown type="taob" status={signup.status} onChange={(s) => updateTaobStatus(signup.id, s)} />
                         </div>
 
                         <div className="hidden md:flex col-span-1 text-right items-center justify-end gap-3" onClick={(e) => e.stopPropagation()}>
@@ -968,7 +1076,7 @@ const DetailBox = ({ label, value }: { label: string, value: string }) => (
   </div>
 );
 
-const StatusDropdown = ({ status, onChange, className = "" }: { status: string, onChange: (s: any) => void, className?: string }) => {
+const StatusDropdown = ({ status, type = 'order', onChange, className = "" }: { status: string, type?: 'order' | 'taob', onChange: (s: any) => void, className?: string }) => {
   const themes: any = {
     pending: 'bg-amber-400 text-amber-950 border-amber-600 shadow-sm',
     confirmed: 'bg-emerald-500 text-white border-emerald-700 shadow-sm',
@@ -987,8 +1095,9 @@ const StatusDropdown = ({ status, onChange, className = "" }: { status: string, 
         className={`w-full appearance-none text-[8px] md:text-[9px] font-black uppercase tracking-widest px-2 md:px-3 py-0.5 md:py-0.5 rounded-full border transition-all cursor-pointer focus:outline-none ${currentTheme}`}
       >
         <option value="" className="bg-white text-stone-400 font-bold italic">No Status</option>
-        <option value="pending" className="bg-amber-100 text-amber-900 font-bold">Pending</option>
+        {type === 'order' && <option value="pending" className="bg-amber-100 text-amber-900 font-bold">Pending</option>}
         <option value="confirmed" className="bg-emerald-100 text-emerald-900 font-bold">Confirmed</option>
+        {type === 'order' && <option value="paid" className="bg-rose-100 text-rose-900 font-bold">Paid</option>}
         <option value="delivered" className="bg-stone-200 text-stone-900 font-bold">Delivered</option>
       </select>
       <div className={`absolute right-2 md:right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-90 ${status && status !== 'none' && status !== 'pending' ? 'text-white' : 'text-stone-400'}`}>
