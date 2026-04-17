@@ -15,6 +15,18 @@ export interface CakeOrder {
   timestamp: number;
 }
 
+export interface TaobSignUp {
+  id: string;
+  created_at: string;
+  customerName: string;
+  email?: string;
+  phoneNumber: string;
+  instagramHandle: string;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  note?: string;
+  timestamp: number;
+}
+
 export enum FormStatus {
   IDLE = 'IDLE',
   SUBMITTING = 'SUBMITTING',

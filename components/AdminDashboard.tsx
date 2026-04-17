@@ -17,6 +17,8 @@ interface NoteData {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [orders, setOrders] = useState<CakeOrder[]>([]);
+  const [activeTab, setActiveTab] = useState<'schedule' | 'taob'>('schedule');
+  const [taobSignUps, setTaobSignUps] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
@@ -91,6 +93,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       
       const fetchedOrders = orderData as unknown as CakeOrder[];
       setOrders(fetchedOrders);
+      
+      // Load TAOB Signups
+      try {
+        const { data: taobData, error: taobError } = await supabase
+          .from('taob')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(100);
+        if (!taobError && taobData) {
+          setTaobSignUps(taobData);
+        }
+      } catch (err) {
+        // Ignore if 'taob' table doesn't exist yet
+      }
 
       const { data: galleryData, error: galleryError } = await supabase
         .from('gallerie')
@@ -246,6 +262,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
         setOrders(prev => prev.filter(o => o.id !== id));
         if (selectedOrder?.id === id) setSelectedOrder(null);
+      } catch (error) {
+        console.error('Delete error:', error);
+      }
+    }
+  };
+
+  const updateTaobStatus = async (id: string, newStatus: string) => {
+    setTaobSignUps(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+    try {
+      const { error } = await supabase
+        .from('taob')
+        .update({ status: newStatus || null })
+        .eq('id', id);
+        
+      if (error) throw error;
+    } catch (error) {
+      console.error('Failed to persist taob status change:', error);
+    }
+  };
+
+  const deleteTaobSignUp = async (id: string) => {
+    if (window.confirm('Confirm permanent deletion from database?')) {
+      try {
+        const { error } = await supabase
+          .from('taob')
+          .delete()
+          .eq('id', id);
+          
+        if (error) throw error;
+        setTaobSignUps(prev => prev.filter(o => o.id !== id));
       } catch (error) {
         console.error('Delete error:', error);
       }
@@ -599,9 +645,23 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="bg-stone-900 text-white text-[9px] md:text-[11px] px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold shadow-sm">
-                    {filteredOrders.length}
+                    {activeTab === 'schedule' ? filteredOrders.length : taobSignUps.length}
                   </span>
-                  <h1 className="text-sm md:text-lg font-serif text-stone-900 font-bold whitespace-nowrap">Studio Schedule</h1>
+                  
+                  <div className="flex items-center space-x-1 bg-stone-100 rounded-full p-1 ml-2">
+                    <button 
+                      onClick={() => setActiveTab('schedule')}
+                      className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'schedule' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                    >
+                      Studio Schedule
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('taob')}
+                      className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'taob' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                    >
+                      TAOB Sign In's
+                    </button>
+                  </div>
                 </div>
               </div>
               <div className="flex md:hidden items-center gap-1">
@@ -615,43 +675,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             </div>
             
             <div className="flex items-center gap-2 md:gap-4 w-full md:w-auto flex-wrap md:flex-nowrap">
-              <div className="relative flex-1 md:flex-none md:w-60" ref={monthPickerRef}>
-                <button 
-                  onClick={() => setIsMonthPickerOpen(!isMonthPickerOpen)}
-                  className={`w-full flex items-center justify-between bg-white border border-stone-200 rounded-[1.25rem] px-4 py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-stone-700 transition-all shadow-sm hover:border-rose-200 hover:bg-stone-50/50 ${isMonthPickerOpen ? 'ring-2 ring-rose-100 border-rose-300' : ''}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Calendar size={14} className="text-rose-400" />
-                    <span className="truncate">{selectedMonthLabel}</span>
-                  </div>
-                  <ChevronDown size={14} className={`text-stone-300 transition-transform duration-300 ${isMonthPickerOpen ? 'rotate-180' : 'rotate-0'}`} />
-                </button>
-
-                {isMonthPickerOpen && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-[1.5rem] shadow-2xl border border-stone-100 overflow-hidden z-[60] animate-in fade-in zoom-in-95 duration-200">
-                    <div className="max-h-80 overflow-y-auto scrollbar-hide py-2">
-                      <button 
-                        onClick={() => handleMonthChange('all')}
-                        className={`w-full px-4 py-3 text-left text-[9px] md:text-[10px] uppercase tracking-widest font-bold flex items-center justify-between transition-colors ${selectedMonth === 'all' ? 'bg-rose-50 text-rose-600' : 'text-stone-500 hover:bg-stone-50'}`}
-                      >
-                        Tous les mois
-                        {selectedMonth === 'all' && <Check size={12} />}
-                      </button>
-                      <div className="h-px bg-stone-100 mx-3 my-1" />
-                      {monthOptions.map((opt) => (
-                        <button 
-                          key={opt.val}
-                          onClick={() => handleMonthChange(opt.val)}
-                          className={`w-full px-4 py-3 text-left text-[9px] md:text-[10px] uppercase tracking-widest font-bold flex items-center justify-between transition-colors ${selectedMonth === opt.val ? 'bg-rose-50 text-rose-600' : 'text-stone-500 hover:bg-stone-50'}`}
-                        >
-                          {opt.label} {opt.year}
-                          {selectedMonth === opt.val && <Check size={12} />}
-                        </button>
-                      ))}
+              {activeTab === 'schedule' && (
+                <div className="relative flex-1 md:flex-none md:w-60" ref={monthPickerRef}>
+                  <button 
+                    onClick={() => setIsMonthPickerOpen(!isMonthPickerOpen)}
+                    className={`w-full flex items-center justify-between bg-white border border-stone-200 rounded-[1.25rem] px-4 py-2 text-[10px] md:text-[11px] font-bold uppercase tracking-widest text-stone-700 transition-all shadow-sm hover:border-rose-200 hover:bg-stone-50/50 ${isMonthPickerOpen ? 'ring-2 ring-rose-100 border-rose-300' : ''}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Calendar size={14} className="text-rose-400" />
+                      <span className="truncate">{selectedMonthLabel}</span>
                     </div>
-                  </div>
-                )}
-              </div>
+                    <ChevronDown size={14} className={`text-stone-300 transition-transform duration-300 ${isMonthPickerOpen ? 'rotate-180' : 'rotate-0'}`} />
+                  </button>
+
+                  {isMonthPickerOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-[1.5rem] shadow-2xl border border-stone-100 overflow-hidden z-[60] animate-in fade-in zoom-in-95 duration-200">
+                      <div className="max-h-80 overflow-y-auto scrollbar-hide py-2">
+                        <button 
+                          onClick={() => handleMonthChange('all')}
+                          className={`w-full px-4 py-3 text-left text-[9px] md:text-[10px] uppercase tracking-widest font-bold flex items-center justify-between transition-colors ${selectedMonth === 'all' ? 'bg-rose-50 text-rose-600' : 'text-stone-500 hover:bg-stone-50'}`}
+                        >
+                          Tous les mois
+                          {selectedMonth === 'all' && <Check size={12} />}
+                        </button>
+                        <div className="h-px bg-stone-100 mx-3 my-1" />
+                        {monthOptions.map((opt) => (
+                          <button 
+                            key={opt.val}
+                            onClick={() => handleMonthChange(opt.val)}
+                            className={`w-full px-4 py-3 text-left text-[9px] md:text-[10px] uppercase tracking-widest font-bold flex items-center justify-between transition-colors ${selectedMonth === opt.val ? 'bg-rose-50 text-rose-600' : 'text-stone-500 hover:bg-stone-50'}`}
+                          >
+                            {opt.label} {opt.year}
+                            {selectedMonth === opt.val && <Check size={12} />}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="relative flex-1 md:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" size={12} />
@@ -674,100 +736,163 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
           {/* Spreadsheet Body */}
           <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm border border-stone-100 overflow-hidden">
-            <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
-              <div className="col-span-2">Event Date</div>
-              <div className="col-span-3">Customer Profile</div>
-              <div className="col-span-1">Size</div>
-              <div className="col-span-2">Flavor</div>
-              <div className="col-span-2">Status</div>
-              <div className="col-span-2 text-right">Actions</div>
-            </div>
-
-            <div className="max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-hide">
-              {groupedOrders.length === 0 ? (
-                <div className="p-10 md:p-20 text-center text-stone-400 italic font-serif text-base md:text-lg flex flex-col items-center gap-4">
-                  <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center text-stone-200">
-                    <Filter size={24} />
-                  </div>
-                  No active records.
+            {activeTab === 'schedule' ? (
+              <>
+                <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
+                  <div className="col-span-2">Event Date</div>
+                  <div className="col-span-3">Customer Profile</div>
+                  <div className="col-span-1">Size</div>
+                  <div className="col-span-2">Flavor</div>
+                  <div className="col-span-2">Status</div>
+                  <div className="col-span-2 text-right">Actions</div>
                 </div>
-              ) : (
-                groupedOrders.map(([date, dateOrders], groupIdx) => (
-                  <div key={date}>
-                    {groupIdx > 0 && <div className="w-full h-1 md:h-1.5 bg-stone-900 shadow-sm" />}
-                    {dateOrders.map((order) => {
-                      const noteData = parseNote(order.note);
-                      const hasNoteContent = noteData.text.length > 0 || noteData.images.length > 0;
-                      
-                      return (
-                        <div 
-                          key={order.id} 
-                          className={`grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-1.5 items-center border-b border-stone-50/50 transition-all cursor-pointer group ${getRowBgColor(order.status)}`}
-                          onClick={() => setSelectedOrder(order)}
-                        >
-                          <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row md:items-center gap-1">
-                            <div className="flex items-center gap-1.5">
-                              <Calendar size={10} className="text-rose-400 flex-shrink-0" />
-                              <span className="text-[10px] md:text-[11px] font-bold text-stone-600 whitespace-nowrap">
-                                {new Date(order.eventDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
-                              </span>
-                            </div>
-                            <div className="md:hidden flex items-center gap-2 mt-0.5 overflow-hidden">
-                               <span className="text-xs font-serif font-bold text-stone-900 truncate max-w-[120px]">{order.customerName}</span>
-                               {galleryImages[order.id] && <ImageIcon size={10} className="text-rose-400" />}
-                               {hasNoteContent && <StickyNote size={10} className="text-amber-500" />}
-                            </div>
-                          </div>
 
-                          <div className="hidden md:flex col-span-3 items-center gap-3">
-                            <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 text-[9px] font-bold border border-stone-200 flex-shrink-0">
-                              {order.customerName ? order.customerName.charAt(0) : '?'}
-                            </div>
-                            <div className="flex flex-col min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-serif font-bold text-stone-900 truncate">{order.customerName}</span>
-                                <button 
-                                  onClick={(e) => openNoteEditor(e, order)}
-                                  className={`text-[8px] uppercase tracking-widest font-black transition-all ${hasNoteContent ? 'text-amber-600' : 'text-stone-300 opacity-0 group-hover:opacity-100 hover:text-amber-500'}`}
-                                >
-                                  {hasNoteContent ? <StickyNote size={10} /> : 'note'}
+                <div className="max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-hide">
+                  {groupedOrders.length === 0 ? (
+                    <div className="p-10 md:p-20 text-center text-stone-400 italic font-serif text-base md:text-lg flex flex-col items-center gap-4">
+                      <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center text-stone-200">
+                        <Filter size={24} />
+                      </div>
+                      No active records.
+                    </div>
+                  ) : (
+                    groupedOrders.map(([date, dateOrders], groupIdx) => (
+                      <div key={date}>
+                        {groupIdx > 0 && <div className="w-full h-1 md:h-1.5 bg-stone-900 shadow-sm" />}
+                        {dateOrders.map((order) => {
+                          const noteData = parseNote(order.note);
+                          const hasNoteContent = noteData.text.length > 0 || noteData.images.length > 0;
+                          
+                          return (
+                            <div 
+                              key={order.id} 
+                              className={`grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-1.5 items-center border-b border-stone-50/50 transition-all cursor-pointer group ${getRowBgColor(order.status)}`}
+                              onClick={() => setSelectedOrder(order)}
+                            >
+                              <div className="col-span-1 md:col-span-2 flex flex-col md:flex-row md:items-center gap-1">
+                                <div className="flex items-center gap-1.5">
+                                  <Calendar size={10} className="text-rose-400 flex-shrink-0" />
+                                  <span className="text-[10px] md:text-[11px] font-bold text-stone-600 whitespace-nowrap">
+                                    {new Date(order.eventDate).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                                  </span>
+                                </div>
+                                <div className="md:hidden flex items-center gap-2 mt-0.5 overflow-hidden">
+                                   <span className="text-xs font-serif font-bold text-stone-900 truncate max-w-[120px]">{order.customerName}</span>
+                                   {galleryImages[order.id] && <ImageIcon size={10} className="text-rose-400" />}
+                                   {hasNoteContent && <StickyNote size={10} className="text-amber-500" />}
+                                </div>
+                              </div>
+
+                              <div className="hidden md:flex col-span-3 items-center gap-3">
+                                <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 text-[9px] font-bold border border-stone-200 flex-shrink-0">
+                                  {order.customerName ? order.customerName.charAt(0) : '?'}
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-serif font-bold text-stone-900 truncate">{order.customerName}</span>
+                                    <button 
+                                      onClick={(e) => openNoteEditor(e, order)}
+                                      className={`text-[8px] uppercase tracking-widest font-black transition-all ${hasNoteContent ? 'text-amber-600' : 'text-stone-300 opacity-0 group-hover:opacity-100 hover:text-amber-500'}`}
+                                    >
+                                      {hasNoteContent ? <StickyNote size={10} /> : 'note'}
+                                    </button>
+                                  </div>
+                                  <a 
+                                    href={`https://instagram.com/${order.instagramHandle}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-[9px] text-rose-400 font-bold truncate hover:text-rose-600 transition-colors w-fit"
+                                  >
+                                    @{order.instagramHandle}
+                                  </a>
+                                </div>
+                                {galleryImages[order.id] && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
+                              </div>
+
+                              <div className="hidden md:block col-span-1 text-[11px] text-stone-500">{order.cakeSize}</div>
+                              <div className="hidden md:block col-span-2 text-[11px] text-stone-500 truncate">{order.flavor}</div>
+
+                              <div className="col-span-1 md:col-span-2 py-1" onClick={(e) => e.stopPropagation()}>
+                                <StatusDropdown status={order.status} onChange={(s) => updateStatus(order.id, s)} />
+                              </div>
+
+                              <div className="hidden md:flex col-span-2 text-right items-center justify-end gap-3" onClick={(e) => e.stopPropagation()}>
+                                <button onClick={() => setSelectedOrder(order)} className="text-stone-300 hover:text-rose-400 transition-colors p-1">
+                                  <Maximize2 size={13} />
+                                </button>
+                                <button onClick={() => deleteOrder(order.id)} className="text-stone-200 hover:text-red-400 transition-colors p-1">
+                                  <Trash2 size={13} />
                                 </button>
                               </div>
-                              <a 
-                                href={`https://instagram.com/${order.instagramHandle}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-[9px] text-rose-400 font-bold truncate hover:text-rose-600 transition-colors w-fit"
-                              >
-                                @{order.instagramHandle}
-                              </a>
                             </div>
-                            {galleryImages[order.id] && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
+                          );
+                        })}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
+                  <div className="col-span-4">Customer Profile</div>
+                  <div className="col-span-3">Email</div>
+                  <div className="col-span-2">Phone</div>
+                  <div className="col-span-2">Status</div>
+                  <div className="col-span-1 text-right">Actions</div>
+                </div>
+
+                <div className="max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-hide">
+                  {taobSignUps.length === 0 ? (
+                    <div className="p-10 md:p-20 text-center text-stone-400 italic font-serif text-base md:text-lg flex flex-col items-center gap-4">
+                      <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center text-stone-200">
+                        <Filter size={24} />
+                      </div>
+                      No TAOB sign-ins yet.
+                    </div>
+                  ) : (
+                    taobSignUps.map((signup) => (
+                      <div 
+                        key={signup.id} 
+                        className={`grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-1.5 items-center border-b border-stone-50/50 transition-all cursor-pointer group ${getRowBgColor(signup.status)}`}
+                      >
+                        <div className="col-span-1 md:col-span-4 flex items-center gap-3">
+                          <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 text-[9px] font-bold border border-stone-200 flex-shrink-0">
+                            {signup.customerName ? signup.customerName.charAt(0) : '?'}
                           </div>
-
-                          <div className="hidden md:block col-span-1 text-[11px] text-stone-500">{order.cakeSize}</div>
-                          <div className="hidden md:block col-span-2 text-[11px] text-stone-500 truncate">{order.flavor}</div>
-
-                          <div className="col-span-1 md:col-span-2 py-1" onClick={(e) => e.stopPropagation()}>
-                            <StatusDropdown status={order.status} onChange={(s) => updateStatus(order.id, s)} />
-                          </div>
-
-                          <div className="hidden md:flex col-span-2 text-right items-center justify-end gap-3" onClick={(e) => e.stopPropagation()}>
-                            <button onClick={() => setSelectedOrder(order)} className="text-stone-300 hover:text-rose-400 transition-colors p-1">
-                              <Maximize2 size={13} />
-                            </button>
-                            <button onClick={() => deleteOrder(order.id)} className="text-stone-200 hover:text-red-400 transition-colors p-1">
-                              <Trash2 size={13} />
-                            </button>
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-xs font-serif font-bold text-stone-900 truncate">{signup.customerName}</span>
+                            <a 
+                              href={`https://instagram.com/${signup.instagramHandle}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-[9px] text-rose-400 font-bold truncate hover:text-rose-600 transition-colors w-fit"
+                            >
+                              @{signup.instagramHandle}
+                            </a>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                ))
-              )}
-            </div>
+
+                        <div className="hidden md:block col-span-3 text-[11px] text-stone-500 truncate">{signup.email || 'N/A'}</div>
+                        <div className="hidden md:block col-span-2 text-[11px] text-stone-500">{signup.phoneNumber}</div>
+
+                        <div className="col-span-1 md:col-span-2 py-1" onClick={(e) => e.stopPropagation()}>
+                          <StatusDropdown status={signup.status} onChange={(s) => updateTaobStatus(signup.id, s)} />
+                        </div>
+
+                        <div className="hidden md:flex col-span-1 text-right items-center justify-end gap-3" onClick={(e) => e.stopPropagation()}>
+                          <button onClick={() => deleteTaobSignUp(signup.id)} className="text-stone-200 hover:text-red-400 transition-colors p-1">
+                            <Trash2 size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
