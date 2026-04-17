@@ -144,11 +144,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       
       const imageMap: Record<string, string> = {};
       galleryData?.forEach((doc: any) => {
-        const linkedOrderId = doc.propertyId?.trim();
-        const fileUrls = doc.images;
+        const linkedOrderId = (doc.propertyId || doc.property_id || doc.id)?.trim();
+        let fileUrls = doc.images || doc.image_url || doc.imageUrl;
 
-        if (linkedOrderId && Array.isArray(fileUrls) && fileUrls.length > 0) {
-          imageMap[linkedOrderId] = String(fileUrls[0]).trim();
+        if (typeof fileUrls === 'string') {
+          try {
+            const parsed = JSON.parse(fileUrls);
+            if (Array.isArray(parsed)) fileUrls = parsed;
+          } catch(e) {}
+        }
+
+        if (linkedOrderId && fileUrls) {
+          if (Array.isArray(fileUrls) && fileUrls.length > 0) {
+            imageMap[linkedOrderId] = String(fileUrls[0]).trim();
+          } else if (typeof fileUrls === 'string' && fileUrls.startsWith('http')) {
+            imageMap[linkedOrderId] = fileUrls.trim();
+          }
         }
       });
       setGalleryImages(imageMap);
@@ -574,9 +585,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <div className="mb-8 md:mb-10 p-5 md:p-8 bg-stone-50 rounded-2xl md:rounded-[2rem] border border-stone-100">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Design Inspiration</span>
-                  {galleryImages[selectedOrder.id] && (
+                  {(galleryImages[selectedOrder.id] || (selectedOrder.inspirationId && galleryImages[selectedOrder.inspirationId])) && (
                     <a 
-                      href={galleryImages[selectedOrder.id]}
+                      href={galleryImages[selectedOrder.id] || (selectedOrder.inspirationId ? galleryImages[selectedOrder.inspirationId] : undefined)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-stone-400 hover:text-rose-400 transition-colors flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold"
@@ -586,10 +597,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   )}
                 </div>
                 
-                {galleryImages[selectedOrder.id] ? (
+                {(galleryImages[selectedOrder.id] || (selectedOrder.inspirationId && galleryImages[selectedOrder.inspirationId])) ? (
                   <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner border border-stone-200 bg-white group">
                     <img 
-                      src={galleryImages[selectedOrder.id]} 
+                      src={galleryImages[selectedOrder.id] || (selectedOrder.inspirationId ? galleryImages[selectedOrder.inspirationId] : undefined)} 
                       className="w-full h-full object-contain" 
                       alt="Design Reference"
                       onError={(e) => {
@@ -927,7 +938,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                 </div>
                                 <div className="md:hidden flex items-center gap-2 mt-0.5 overflow-hidden">
                                    <span className="text-xs font-serif font-bold text-stone-900 truncate max-w-[120px]">{order.customerName}</span>
-                                   {galleryImages[order.id] && <ImageIcon size={10} className="text-rose-400" />}
+                                   {(galleryImages[order.id] || (order.inspirationId && galleryImages[order.inspirationId])) && <ImageIcon size={10} className="text-rose-400" />}
                                    {hasNoteContent && <StickyNote size={10} className="text-amber-500" />}
                                 </div>
                               </div>
@@ -956,7 +967,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                     @{order.instagramHandle}
                                   </a>
                                 </div>
-                                {galleryImages[order.id] && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
+                                {(galleryImages[order.id] || (order.inspirationId && galleryImages[order.inspirationId])) && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
                               </div>
 
                               <div className="hidden md:block col-span-1 text-[11px] text-stone-500">{order.cakeSize}</div>
