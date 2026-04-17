@@ -849,8 +849,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             ) : (
               <>
                 <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
-                  <div className="col-span-4">Customer Profile</div>
-                  <div className="col-span-3">Preuve de paiement</div>
+                  <div className="col-span-3">Customer</div>
+                  <div className="col-span-2">Instagram @</div>
+                  <div className="col-span-2">Preuve de paiement</div>
                   <div className="col-span-2">Phone</div>
                   <div className="col-span-2">Status</div>
                   <div className="col-span-1 text-right">Actions</div>
@@ -870,25 +871,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                         key={signup.id} 
                         className={`grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-1.5 items-center border-b border-stone-50/50 transition-all cursor-pointer group ${getRowBgColor(signup.status)}`}
                       >
-                        <div className="col-span-1 md:col-span-4 flex items-center gap-3">
+                        <div className="col-span-1 md:col-span-3 flex items-center gap-3">
                           <div className="w-6 h-6 rounded-full bg-stone-100 flex items-center justify-center text-stone-400 text-[9px] font-bold border border-stone-200 flex-shrink-0">
                             {signup.customerName ? signup.customerName.charAt(0) : '?'}
                           </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-xs font-serif font-bold text-stone-900 truncate">{signup.customerName}</span>
-                            <a 
-                              href={`https://instagram.com/${signup.instagramHandle}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="text-[9px] text-rose-400 font-bold truncate hover:text-rose-600 transition-colors w-fit"
-                            >
-                              @{signup.instagramHandle}
-                            </a>
-                          </div>
+                          <span className="text-xs font-serif font-bold text-stone-900 truncate">{signup.customerName}</span>
+                        </div>
+                        
+                        <div className="hidden md:flex col-span-2 items-center">
+                          <a 
+                            href={`https://instagram.com/${signup.instagramHandle}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-[11px] text-rose-400 font-bold truncate hover:text-rose-600 transition-colors w-fit flex items-center gap-1.5"
+                          >
+                            <Instagram size={11} />
+                            @{signup.instagramHandle}
+                          </a>
                         </div>
 
-                        <div className="hidden md:flex flex-col col-span-3 items-start justify-center">
+                        <div className="hidden md:flex flex-col col-span-2 items-start justify-center">
                           {signup.paymentProofUrl ? (
                             <a 
                               href={signup.paymentProofUrl} 
