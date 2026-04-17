@@ -256,8 +256,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     e.preventDefault();
     setIsLoggingIn(true);
     
-    // Check if the credentials are not set
-    if (import.meta.env.VITE_SUPABASE_URL === undefined && import.meta.env.SUPABASE_URL === undefined && import.meta.env.NEXT_PUBLIC_SUPABASE_URL === undefined) {
+    // Fallback to placeholder check
+    if (!import.meta.env.VITE_SUPABASE_URL && !import.meta.env.SUPABASE_URL) {
       alert("Missing Supabase configuration! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables.");
       setIsLoggingIn(false);
       return;
