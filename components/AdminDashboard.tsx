@@ -125,8 +125,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         }
       });
       setGalleryImages(imageMap);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Fetch error:', error);
+      alert(`Error reading from Supabase: ${error.message || 'Check database permissions'}`);
     } finally {
       setIsLoading(false);
     }
