@@ -2,8 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { CheckCircle2, AlertCircle, Upload, X, Image as ImageIcon } from 'lucide-react';
 import { FormStatus, CakeOrder } from '../types';
-import { databases, storage, DATABASE_ID, COLLECTION_ID, BUCKET_ID, GALLERY_COLLECTION_ID, PROJECT_ID } from '../lib/appwrite';
-import { ID } from 'appwrite';
+import { supabase } from '../lib/supabase';
 
 export const OrderForm: React.FC = () => {
   const [status, setStatus] = useState<FormStatus>(FormStatus.IDLE);
@@ -57,33 +56,39 @@ export const OrderForm: React.FC = () => {
     setStatus(FormStatus.SUBMITTING);
     
     try {
-      const orderUniqueId = ID.unique();
+      const orderUniqueId = crypto.randomUUID();
       let inspirationId = '';
       
       // 1. Upload image if selected
       if (selectedFile) {
-        const fileId = ID.unique();
-        await storage.createFile(BUCKET_ID, fileId, selectedFile);
+        const fileExt = selectedFile.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
         
-        // IMMEDIATE LINK: Generate the URL right now
-        // Using the preferred fra.cloud endpoint for consistency
-        const fileUrl = `https://fra.cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${fileId}/view?project=${PROJECT_ID}&mode=admin`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('gallery')
+          .upload(fileName, selectedFile);
+          
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('gallery')
+          .getPublicUrl(fileName);
         
         // 2. Create entry in 'gallerie' collection
         inspirationId = orderUniqueId;
-        await databases.createDocument(
-          DATABASE_ID,
-          GALLERY_COLLECTION_ID,
-          ID.unique(),
-          {
-            images: [fileUrl], // Saved as a full link immediately
-            propertyId: inspirationId
-          }
-        );
+        const { error: galleryError } = await supabase
+          .from('gallerie')
+          .insert({
+            propertyId: inspirationId,
+            images: [publicUrl]
+          });
+          
+        if (galleryError) throw galleryError;
       }
 
       // 3. Create final Order in 'fairy' collection
       const orderData = {
+        id: orderUniqueId,
         customerName: formData.customerName || '',
         phoneNumber: formData.phoneNumber || '',
         instagramHandle: formData.instagramHandle?.replace('@', '') || '',
@@ -96,12 +101,11 @@ export const OrderForm: React.FC = () => {
         timestamp: Date.now()
       };
 
-      await databases.createDocument(
-        DATABASE_ID,
-        COLLECTION_ID,
-        orderUniqueId,
-        orderData
-      );
+      const { error: orderError } = await supabase
+        .from('fairy')
+        .insert(orderData);
+        
+      if (orderError) throw orderError;
 
       setStatus(FormStatus.SUCCESS);
       setFormData({

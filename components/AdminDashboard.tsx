@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { CakeOrder } from '../types';
 import { Trash2, User, Search, RefreshCw, Package, X, Calendar, LogOut, ChevronDown, Instagram, Maximize2, Filter, Check, Image as ImageIcon, ExternalLink, Mail, Lock, StickyNote, Save, Edit3, Plus, ImagePlus, Loader2 } from 'lucide-react';
-import { databases, DATABASE_ID, COLLECTION_ID, GALLERY_COLLECTION_ID, BUCKET_ID, PROJECT_ID, account, storage } from '../lib/appwrite';
-import { Query, ID } from 'appwrite';
+import { supabase } from '../lib/supabase';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -51,15 +50,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const monthPickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        await account.get();
-        setIsAuthenticated(true);
-      } catch (err) {
-        setIsAuthenticated(false);
-      }
-    };
-    checkSession();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
   }, []);
 
   useEffect(() => {
@@ -87,36 +80,32 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const loadOrders = async () => {
     setIsLoading(true);
     try {
-      const orderResponse = await databases.listDocuments(
-        DATABASE_ID,
-        COLLECTION_ID,
-        [
-          Query.limit(100), 
-          Query.orderDesc('eventDate'),
-          Query.orderDesc('$createdAt')
-        ]
-      );
-      const fetchedOrders = orderResponse.documents as unknown as CakeOrder[];
+      const { data: orderData, error: orderError } = await supabase
+        .from('fairy')
+        .select('*')
+        .order('eventDate', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(100);
+        
+      if (orderError) throw orderError;
+      
+      const fetchedOrders = orderData as unknown as CakeOrder[];
       setOrders(fetchedOrders);
 
-      const galleryResponse = await databases.listDocuments(
-        DATABASE_ID,
-        GALLERY_COLLECTION_ID,
-        [Query.limit(100)]
-      );
+      const { data: galleryData, error: galleryError } = await supabase
+        .from('gallerie')
+        .select('*')
+        .limit(100);
+        
+      if (galleryError) throw galleryError;
       
       const imageMap: Record<string, string> = {};
-      galleryResponse.documents.forEach((doc: any) => {
+      galleryData?.forEach((doc: any) => {
         const linkedOrderId = doc.propertyId?.trim();
-        const fileIds = doc.images;
+        const fileUrls = doc.images;
 
-        if (linkedOrderId && Array.isArray(fileIds) && fileIds.length > 0) {
-          const rawValue = String(fileIds[0]).trim();
-          let finalUrl = rawValue;
-          if (!rawValue.startsWith('http')) {
-            finalUrl = `https://fra.cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${rawValue}/view?project=${PROJECT_ID}&mode=admin`;
-          }
-          imageMap[linkedOrderId] = finalUrl;
+        if (linkedOrderId && Array.isArray(fileUrls) && fileUrls.length > 0) {
+          imageMap[linkedOrderId] = String(fileUrls[0]).trim();
         }
       });
       setGalleryImages(imageMap);
@@ -145,12 +134,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
   const openNoteEditor = (e: React.MouseEvent, order: CakeOrder) => {
     e.stopPropagation();
-    setEditingNoteId(order.$id);
+    setEditingNoteId(order.id);
     setNoteContent(parseNote(order.note));
   };
 
   const saveNote = async (id: string, content: NoteData) => {
-    const originalOrder = orders.find(o => o.$id === id);
+    const originalOrder = orders.find(o => o.id === id);
     const serialized = JSON.stringify(content);
     
     if (!originalOrder || serialized === originalOrder.note) {
@@ -160,9 +149,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     
     setIsSavingNote(true);
     try {
-      await databases.updateDocument(DATABASE_ID, COLLECTION_ID, id, { note: serialized });
-      setOrders(prev => prev.map(o => o.$id === id ? { ...o, note: serialized } : o));
-      if (selectedOrder?.$id === id) {
+      const { error } = await supabase
+        .from('fairy')
+        .update({ note: serialized })
+        .eq('id', id);
+        
+      if (error) throw error;
+      
+      setOrders(prev => prev.map(o => o.id === id ? { ...o, note: serialized } : o));
+      if (selectedOrder?.id === id) {
         setSelectedOrder(prev => prev ? { ...prev, note: serialized } : null);
       }
     } catch (error) {
@@ -178,17 +173,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
     setIsUploadingImage(true);
     try {
-      const fileId = ID.unique();
-      await storage.createFile(BUCKET_ID, fileId, file);
-      const fileUrl = `https://fra.cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${fileId}/view?project=${PROJECT_ID}&mode=admin`;
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${crypto.randomUUID()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('gallery')
+        .upload(fileName, file);
+        
+      if (uploadError) throw uploadError;
+      
+      const { data: { publicUrl } } = supabase.storage
+        .from('gallery')
+        .getPublicUrl(fileName);
       
       const newContent = {
         ...noteContent,
-        images: [...noteContent.images, fileUrl]
+        images: [...noteContent.images, publicUrl]
       };
       setNoteContent(newContent);
-      // We don't close the editor here, just update state. 
-      // It will save on click-outside or when the user manually saves.
     } catch (error) {
       console.error('Upload failed:', error);
       alert('Failed to upload image. Please try again.');
@@ -211,12 +213,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   };
 
   const updateStatus = async (id: string, newStatus: CakeOrder['status'] | '') => {
-    setOrders(prev => prev.map(o => o.$id === id ? { ...o, status: newStatus as any } : o));
-    if (selectedOrder?.$id === id) {
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus as any } : o));
+    if (selectedOrder?.id === id) {
       setSelectedOrder(prev => prev ? { ...prev, status: newStatus as any } : null);
     }
     try {
-      await databases.updateDocument(DATABASE_ID, COLLECTION_ID, id, { status: newStatus || null });
+      const { error } = await supabase
+        .from('fairy')
+        .update({ status: newStatus || null })
+        .eq('id', id);
+        
+      if (error) throw error;
     } catch (error) {
       console.error('Failed to persist status change:', error);
     }
@@ -225,13 +232,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const deleteOrder = async (id: string) => {
     if (window.confirm('Confirm permanent deletion from database?')) {
       try {
-        await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, id);
-        const galleryDoc = (await databases.listDocuments(DATABASE_ID, GALLERY_COLLECTION_ID, [Query.equal('propertyId', id)])).documents[0];
-        if (galleryDoc) {
-          await databases.deleteDocument(DATABASE_ID, GALLERY_COLLECTION_ID, galleryDoc.$id);
-        }
-        setOrders(prev => prev.filter(o => o.$id !== id));
-        if (selectedOrder?.$id === id) setSelectedOrder(null);
+        const { error: deleteOrderError } = await supabase
+          .from('fairy')
+          .delete()
+          .eq('id', id);
+          
+        if (deleteOrderError) throw deleteOrderError;
+        
+        await supabase
+          .from('gallerie')
+          .delete()
+          .eq('propertyId', id);
+
+        setOrders(prev => prev.filter(o => o.id !== id));
+        if (selectedOrder?.id === id) setSelectedOrder(null);
       } catch (error) {
         console.error('Delete error:', error);
       }
@@ -242,7 +256,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     e.preventDefault();
     setIsLoggingIn(true);
     try {
-      await account.createEmailPasswordSession(email, password);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
       setIsAuthenticated(true);
     } catch (error: any) {
       alert(`Login failed: ${error.message}`);
@@ -253,7 +271,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
   const handleLogout = async () => {
     try {
-      await account.deleteSession('current');
+      await supabase.auth.signOut();
       setIsAuthenticated(false);
       setEmail('');
       setPassword('');
@@ -464,9 +482,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <div className="mb-8 md:mb-10 p-5 md:p-8 bg-stone-50 rounded-2xl md:rounded-[2rem] border border-stone-100">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Design Inspiration</span>
-                  {galleryImages[selectedOrder.$id] && (
+                  {galleryImages[selectedOrder.id] && (
                     <a 
-                      href={galleryImages[selectedOrder.$id]}
+                      href={galleryImages[selectedOrder.id]}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-stone-400 hover:text-rose-400 transition-colors flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold"
@@ -476,10 +494,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   )}
                 </div>
                 
-                {galleryImages[selectedOrder.$id] ? (
+                {galleryImages[selectedOrder.id] ? (
                   <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner border border-stone-200 bg-white group">
                     <img 
-                      src={galleryImages[selectedOrder.$id]} 
+                      src={galleryImages[selectedOrder.id]} 
                       className="w-full h-full object-contain" 
                       alt="Design Reference"
                       onError={(e) => {
@@ -500,12 +518,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Production Status</span>
                   <StatusDropdown 
                     status={selectedOrder.status} 
-                    onChange={(s) => updateStatus(selectedOrder.$id, s)} 
+                    onChange={(s) => updateStatus(selectedOrder.id, s)} 
                     className="w-full md:w-48"
                   />
                 </div>
                 <button 
-                  onClick={() => deleteOrder(selectedOrder.$id)}
+                  onClick={() => deleteOrder(selectedOrder.id)}
                   className="flex items-center gap-2 text-stone-300 hover:text-red-400 transition-colors text-[10px] font-bold uppercase tracking-widest md:pt-4"
                 >
                   <Trash2 size={16} /> Delete Order
@@ -682,7 +700,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       
                       return (
                         <div 
-                          key={order.$id} 
+                          key={order.id} 
                           className={`grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-1.5 items-center border-b border-stone-50/50 transition-all cursor-pointer group ${getRowBgColor(order.status)}`}
                           onClick={() => setSelectedOrder(order)}
                         >
@@ -695,7 +713,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                             </div>
                             <div className="md:hidden flex items-center gap-2 mt-0.5 overflow-hidden">
                                <span className="text-xs font-serif font-bold text-stone-900 truncate max-w-[120px]">{order.customerName}</span>
-                               {galleryImages[order.$id] && <ImageIcon size={10} className="text-rose-400" />}
+                               {galleryImages[order.id] && <ImageIcon size={10} className="text-rose-400" />}
                                {hasNoteContent && <StickyNote size={10} className="text-amber-500" />}
                             </div>
                           </div>
@@ -724,21 +742,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                 @{order.instagramHandle}
                               </a>
                             </div>
-                            {galleryImages[order.$id] && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
+                            {galleryImages[order.id] && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
                           </div>
 
                           <div className="hidden md:block col-span-1 text-[11px] text-stone-500">{order.cakeSize}</div>
                           <div className="hidden md:block col-span-2 text-[11px] text-stone-500 truncate">{order.flavor}</div>
 
                           <div className="col-span-1 md:col-span-2 py-1" onClick={(e) => e.stopPropagation()}>
-                            <StatusDropdown status={order.status} onChange={(s) => updateStatus(order.$id, s)} />
+                            <StatusDropdown status={order.status} onChange={(s) => updateStatus(order.id, s)} />
                           </div>
 
                           <div className="hidden md:flex col-span-2 text-right items-center justify-end gap-3" onClick={(e) => e.stopPropagation()}>
                             <button onClick={() => setSelectedOrder(order)} className="text-stone-300 hover:text-rose-400 transition-colors p-1">
                               <Maximize2 size={13} />
                             </button>
-                            <button onClick={() => deleteOrder(order.$id)} className="text-stone-200 hover:text-red-400 transition-colors p-1">
+                            <button onClick={() => deleteOrder(order.id)} className="text-stone-200 hover:text-red-400 transition-colors p-1">
                               <Trash2 size={13} />
                             </button>
                           </div>

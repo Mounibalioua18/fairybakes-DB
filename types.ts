@@ -1,7 +1,7 @@
 
 export interface CakeOrder {
-  $id: string;
-  $createdAt: string;
+  id: string;
+  created_at: string;
   customerName: string;
   phoneNumber: string;
   instagramHandle: string;
