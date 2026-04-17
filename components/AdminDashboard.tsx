@@ -360,6 +360,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     return filtered;
   }, [orders, searchQuery, activeFilter, selectedMonth]);
 
+  const filteredTaobSignUps = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    let filtered = taobSignUps.filter(signup => {
+      const nameMatch = (signup.customerName || '').toLowerCase().includes(query);
+      const handleMatch = (signup.instagramHandle || '').toLowerCase().includes(query);
+      const emailMatch = (signup.email || '').toLowerCase().includes(query);
+      const phoneMatch = (signup.phoneNumber || '').toLowerCase().includes(query);
+      return nameMatch || handleMatch || emailMatch || phoneMatch;
+    });
+    if (activeFilter !== 'all') filtered = filtered.filter(o => o.status === activeFilter);
+    // TAOB doesn't use selectedMonth
+    return filtered;
+  }, [taobSignUps, searchQuery, activeFilter]);
+
   const groupedOrders = useMemo(() => {
     const groups: Record<string, CakeOrder[]> = {};
     filteredOrders.forEach(order => {
@@ -645,7 +659,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="bg-stone-900 text-white text-[9px] md:text-[11px] px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold shadow-sm">
-                    {activeTab === 'schedule' ? filteredOrders.length : taobSignUps.length}
+                    {activeTab === 'schedule' ? filteredOrders.length : filteredTaobSignUps.length}
                   </span>
                   
                   <div className="flex items-center space-x-1 bg-stone-100 rounded-full p-1 ml-2">
@@ -844,7 +858,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
 
                 <div className="max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-hide">
-                  {taobSignUps.length === 0 ? (
+                  {filteredTaobSignUps.length === 0 ? (
                     <div className="p-10 md:p-20 text-center text-stone-400 italic font-serif text-base md:text-lg flex flex-col items-center gap-4">
                       <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center text-stone-200">
                         <Filter size={24} />
@@ -852,7 +866,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       No TAOB sign-ins yet.
                     </div>
                   ) : (
-                    taobSignUps.map((signup) => (
+                    filteredTaobSignUps.map((signup) => (
                       <div 
                         key={signup.id} 
                         className={`grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-4 px-4 md:px-8 py-1.5 items-center border-b border-stone-50/50 transition-all cursor-pointer group ${getRowBgColor(signup.status)}`}
