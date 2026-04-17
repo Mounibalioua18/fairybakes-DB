@@ -89,11 +89,11 @@ export const OrderForm: React.FC = () => {
       // 3. Create final Order in 'orders' collection
       const orderData = {
         id: orderUniqueId,
-        customerName: formData.customerName || '',
-        phoneNumber: formData.phoneNumber || '',
-        instagramHandle: formData.instagramHandle?.replace('@', '') || '',
-        eventDate: formData.eventDate || '',
-        cakeSize: formData.cakeSize || '',
+        costumer_name: formData.customerName || '',
+        "phone number": formData.phoneNumber || '',
+        instagram_handle: formData.instagramHandle?.replace('@', '') || '',
+        event_date: formData.eventDate || '',
+        cake_size: formData.cakeSize || '',
         flavor: formData.flavor || '',
         designNotes: 'Inspiration Synced',
         inspirationId: inspirationId,

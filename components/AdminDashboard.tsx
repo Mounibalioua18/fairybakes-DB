@@ -91,7 +91,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         
       if (orderError) throw orderError;
       
-      const fetchedOrders = orderData as unknown as CakeOrder[];
+      const fetchedOrders = (orderData || []).map((o: any) => ({
+        id: o.id,
+        created_at: o.created_at,
+        customerName: o.costumer_name || o.customerName || '',
+        phoneNumber: o['phone number'] || o.phone_number || o.phoneNumber || '',
+        instagramHandle: o.instagram_handle || o.instagramHandle || '',
+        eventDate: o.event_date || o.eventDate || '',
+        cakeSize: o.cake_size || o.cakeSize || '',
+        flavor: o.flavor || '',
+        designNotes: o.designNotes || o.design_notes || '',
+        note: o.note || '',
+        inspirationId: o.inspirationId || o.inspiration_id || '',
+        status: o.status || 'pending',
+        timestamp: o.timestamp || Date.now()
+      })) as CakeOrder[];
+      
       setOrders(fetchedOrders);
       
       // Load TAOB Signups
@@ -102,7 +117,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           .order('created_at', { ascending: false })
           .limit(100);
         if (!taobError && taobData) {
-          setTaobSignUps(taobData);
+          const mappedTaob = taobData.map((o: any) => ({
+            id: o.id,
+            created_at: o.created_at,
+            customerName: o.costumer_name || o.customerName || '',
+            phoneNumber: o['phone number'] || o.phone_number || o.phoneNumber || '',
+            instagramHandle: o.instagram_handle || o.instagramHandle || '',
+            paymentProofUrl: o.paymentProofUrl || o.payment_proof_url || '',
+            status: o.status || 'pending',
+            note: o.note || '',
+            timestamp: o.timestamp || Date.now()
+          }));
+          setTaobSignUps(mappedTaob);
         }
       } catch (err) {
         // Ignore if 'taob' table doesn't exist yet
