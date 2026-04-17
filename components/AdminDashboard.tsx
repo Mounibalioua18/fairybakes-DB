@@ -95,9 +95,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       const fetchedOrders = (orderData || []).map((o: any) => ({
         id: o.id,
         created_at: o.created_at,
-        customerName: o.costumer_name || o.customerName || '',
+        customerName: o.costumer_name || o.customer_name || o.costumerName || o.customerName || o.Name || o.name || '',
         phoneNumber: o['phone number'] || o.phone_number || o.phoneNumber || '',
-        instagramHandle: o.instagram_handle || o.instagramHandle || '',
+        instagramHandle: o.instagram_handle || o.instagramHandle || o.instagram || '',
         eventDate: o.event_date || o.eventDate || '',
         cakeSize: o.cake_size || o.cakeSize || '',
         flavor: o.flavor || '',
@@ -121,7 +121,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           const mappedTaob = taobData.map((o: any) => ({
             id: o.id,
             created_at: o.created_at,
-            customerName: o.name || o.costumer_name || o.customerName || '',
+            customerName: o.name || o.costumer_name || o.customer_name || o.customerName || '',
             phoneNumber: o.phone || o['phone number'] || o.phone_number || o.phoneNumber || '',
             instagramHandle: o.instagram || o.instagram_handle || o.instagramHandle || '',
             paymentProofUrl: o.proof_image_url || o.paymentProofUrl || o.payment_proof_url || '',
