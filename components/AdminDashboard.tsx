@@ -83,7 +83,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     setIsLoading(true);
     try {
       const { data: orderData, error: orderError } = await supabase
-        .from('fairy')
+        .from('orders')
         .select('*')
         .order('eventDate', { ascending: false })
         .order('created_at', { ascending: false })
@@ -109,7 +109,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       }
 
       const { data: galleryData, error: galleryError } = await supabase
-        .from('gallerie')
+        .from('galleries')
         .select('*')
         .limit(100);
         
@@ -166,7 +166,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     setIsSavingNote(true);
     try {
       const { error } = await supabase
-        .from('fairy')
+        .from('orders')
         .update({ note: serialized })
         .eq('id', id);
         
@@ -193,13 +193,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       const fileName = `${crypto.randomUUID()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
-        .from('gallery')
+        .from('inspiration')
         .upload(fileName, file);
         
       if (uploadError) throw uploadError;
       
       const { data: { publicUrl } } = supabase.storage
-        .from('gallery')
+        .from('inspiration')
         .getPublicUrl(fileName);
       
       const newContent = {
@@ -235,7 +235,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     }
     try {
       const { error } = await supabase
-        .from('fairy')
+        .from('orders')
         .update({ status: newStatus || null })
         .eq('id', id);
         
@@ -249,14 +249,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     if (window.confirm('Confirm permanent deletion from database?')) {
       try {
         const { error: deleteOrderError } = await supabase
-          .from('fairy')
+          .from('orders')
           .delete()
           .eq('id', id);
           
         if (deleteOrderError) throw deleteOrderError;
         
         await supabase
-          .from('gallerie')
+          .from('galleries')
           .delete()
           .eq('propertyId', id);
 

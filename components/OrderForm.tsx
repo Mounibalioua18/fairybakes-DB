@@ -65,19 +65,19 @@ export const OrderForm: React.FC = () => {
         const fileName = `${crypto.randomUUID()}.${fileExt}`;
         
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('gallery')
+          .from('inspiration')
           .upload(fileName, selectedFile);
           
         if (uploadError) throw uploadError;
         
         const { data: { publicUrl } } = supabase.storage
-          .from('gallery')
+          .from('inspiration')
           .getPublicUrl(fileName);
         
-        // 2. Create entry in 'gallerie' collection
+        // 2. Create entry in 'galleries' collection
         inspirationId = orderUniqueId;
         const { error: galleryError } = await supabase
-          .from('gallerie')
+          .from('galleries')
           .insert({
             propertyId: inspirationId,
             images: [publicUrl]
@@ -86,7 +86,7 @@ export const OrderForm: React.FC = () => {
         if (galleryError) throw galleryError;
       }
 
-      // 3. Create final Order in 'fairy' collection
+      // 3. Create final Order in 'orders' collection
       const orderData = {
         id: orderUniqueId,
         customerName: formData.customerName || '',
@@ -102,7 +102,7 @@ export const OrderForm: React.FC = () => {
       };
 
       const { error: orderError } = await supabase
-        .from('fairy')
+        .from('orders')
         .insert(orderData);
         
       if (orderError) throw orderError;
