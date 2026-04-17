@@ -97,7 +97,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       // Load TAOB Signups
       try {
         const { data: taobData, error: taobError } = await supabase
-          .from('taob')
+          .from('taob_signups')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(100);
@@ -273,7 +273,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     setTaobSignUps(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
     try {
       const { error } = await supabase
-        .from('taob')
+        .from('taob_signups')
         .update({ status: newStatus || null })
         .eq('id', id);
         
@@ -287,7 +287,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     if (window.confirm('Confirm permanent deletion from database?')) {
       try {
         const { error } = await supabase
-          .from('taob')
+          .from('taob_signups')
           .delete()
           .eq('id', id);
           
