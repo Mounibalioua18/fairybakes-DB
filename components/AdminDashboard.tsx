@@ -549,14 +549,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 <div className="w-14 h-14 md:w-20 md:h-20 bg-rose-50 rounded-2xl md:rounded-[2rem] flex items-center justify-center text-rose-400 border border-rose-100 flex-shrink-0">
                   <User size={selectedOrder.customerName ? 28 : 36} />
                 </div>
-                <div className="min-w-0 flex-1 relative">
-                  <div className="flex items-center gap-3">
-                    <h2 className="text-xl md:text-3xl font-serif text-stone-900 font-bold truncate leading-none">
+                <div className="min-w-0 flex-1 relative flex flex-col justify-center">
+                  <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3 items-start">
+                    <h2 className="text-xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight">
                       {selectedOrder.customerName}
                     </h2>
                     <button 
                       onClick={(e) => openNoteEditor(e, selectedOrder)}
-                      className={`flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] uppercase tracking-widest font-bold transition-all ${selectedOrder.note ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-stone-50 text-stone-400 border border-stone-100 hover:bg-amber-50 hover:text-amber-600'}`}
+                      className={`mt-1 md:mt-0 flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] uppercase tracking-widest font-bold transition-all ${selectedOrder.note ? 'bg-amber-100 text-amber-700 border border-amber-200' : 'bg-stone-50 text-stone-400 border border-stone-100 hover:bg-amber-50 hover:text-amber-600'}`}
                     >
                       <Edit3 size={10} />
                       {selectedOrder.note ? 'See Note' : 'note'}
@@ -660,8 +660,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 <div className="w-14 h-14 md:w-20 md:h-20 bg-rose-50 rounded-2xl md:rounded-[2rem] flex items-center justify-center text-rose-400 border border-rose-100 flex-shrink-0">
                   <User size={selectedTaob.customerName ? 28 : 36} />
                 </div>
-                <div className="min-w-0 flex-1 relative">
-                  <h2 className="text-xl md:text-3xl font-serif text-stone-900 font-bold truncate leading-none mb-1">
+                <div className="min-w-0 flex-1 relative flex flex-col justify-center">
+                  <h2 className="text-xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight mb-1">
                     {selectedTaob.customerName || 'No Name'}
                   </h2>
                   <a 
