@@ -255,13 +255,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
-    
-    // Fallback to placeholder check
-    if (!import.meta.env.VITE_SUPABASE_URL && !import.meta.env.SUPABASE_URL) {
-      alert("Missing Supabase configuration! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables.");
-      setIsLoggingIn(false);
-      return;
-    }
 
     try {
       const { error } = await supabase.auth.signInWithPassword({
