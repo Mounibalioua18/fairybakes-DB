@@ -120,10 +120,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           const mappedTaob = taobData.map((o: any) => ({
             id: o.id,
             created_at: o.created_at,
-            customerName: o.costumer_name || o.customerName || '',
-            phoneNumber: o['phone number'] || o.phone_number || o.phoneNumber || '',
-            instagramHandle: o.instagram_handle || o.instagramHandle || '',
-            paymentProofUrl: o.paymentProofUrl || o.payment_proof_url || '',
+            customerName: o.name || o.costumer_name || o.customerName || '',
+            phoneNumber: o.phone || o['phone number'] || o.phone_number || o.phoneNumber || '',
+            instagramHandle: o.instagram || o.instagram_handle || o.instagramHandle || '',
+            paymentProofUrl: o.proof_image_url || o.paymentProofUrl || o.payment_proof_url || '',
             status: o.status || 'pending',
             note: o.note || '',
             timestamp: o.timestamp || Date.now()
