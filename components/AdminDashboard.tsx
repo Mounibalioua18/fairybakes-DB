@@ -144,7 +144,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       
       const imageMap: Record<string, string> = {};
       galleryData?.forEach((doc: any) => {
-        const linkedOrderId = (doc.propertyId || doc.property_id || doc.id)?.trim();
+        const linkedOrderId = (doc.order_id || doc.propertyId || doc.property_id || doc.id)?.trim();
         let fileUrls = doc.images || doc.image_url || doc.imageUrl;
 
         if (typeof fileUrls === 'string') {

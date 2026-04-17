@@ -79,6 +79,7 @@ export const OrderForm: React.FC = () => {
         const { error: galleryError } = await supabase
           .from('galleries')
           .insert({
+            order_id: inspirationId,
             propertyId: inspirationId,
             images: [publicUrl]
           });
