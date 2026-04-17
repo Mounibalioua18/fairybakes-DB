@@ -255,6 +255,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoggingIn(true);
+    
+    // Check if the credentials are not set
+    if (import.meta.env.VITE_SUPABASE_URL === undefined && import.meta.env.SUPABASE_URL === undefined && import.meta.env.NEXT_PUBLIC_SUPABASE_URL === undefined) {
+      alert("Missing Supabase configuration! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment variables.");
+      setIsLoggingIn(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -263,7 +271,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       if (error) throw error;
       setIsAuthenticated(true);
     } catch (error: any) {
-      alert(`Login failed: ${error.message}`);
+      alert(`Login failed: ${error.message === 'Failed to fetch' ? 'Failed to fetch (Check if Supabase Environment Variables are correctly entered!)' : error.message}`);
     } finally {
       setIsLoggingIn(false);
     }
