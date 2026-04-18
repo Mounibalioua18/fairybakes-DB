@@ -291,27 +291,31 @@ export const PortfolioManager: React.FC = () => {
                     <Loader2 className="animate-spin text-stone-300" size={32} />
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="flex flex-col items-center">
                     {/* Main Picture */}
-                    <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4 mb-2">
-                        <h2 className="text-sm font-bold text-stone-800 mb-4 flex items-center gap-2">
+                    <div className="w-full max-w-2xl mb-12 flex flex-col items-center">
+                        <h2 className="text-sm font-bold text-stone-800 mb-4 flex items-center justify-center gap-2">
                             <ImageIcon size={16} className="text-rose-400" />
                             Main Highlight Picture
                         </h2>
-                        <div className="max-w-2xl">
+                        <div className="w-full">
                             {renderCard(0, "Main Graphic", "main")}
                         </div>
                     </div>
                     
-                    <div className="col-span-1 md:col-span-2 lg:col-span-3 xl:col-span-4 mt-6 mb-2">
-                        <h2 className="text-sm font-bold text-stone-800 flex items-center gap-2">
+                    {/* Gallery Pictures Header */}
+                    <div className="w-full max-w-5xl mt-4 mb-6">
+                        <h2 className="text-sm font-bold text-stone-800 flex items-center justify-center gap-2">
                             <ImageIcon size={16} className="text-rose-400" />
                             Gallery Pictures
                         </h2>
+                        <p className="text-center text-[10px] text-stone-500 mt-1">These will be displayed in a 3x2 grid</p>
                     </div>
 
                     {/* 6 Gallery Pictures */}
-                    {[1, 2, 3, 4, 5, 6].map((num) => renderCard(num, `Gallery Image ${num}`, "gallery"))}
+                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[1, 2, 3, 4, 5, 6].map((num) => renderCard(num, `Gallery Image ${num}`, "gallery"))}
+                    </div>
                 </div>
             )}
         </div>
