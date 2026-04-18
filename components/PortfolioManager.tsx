@@ -345,7 +345,7 @@ export const PortfolioManager: React.FC = () => {
 
                     {/* 3 TAOB Pictures */}
                     <div className="w-full max-w-7xl px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-14">
-                        {[9, 10, 11].map((num, i) => renderCard(num, `TAOB Image ${i + 1}`, "gallery"))}
+                        {[9, 10, 11].map((num, i) => renderCard(num, `TAOB Image ${i + 1}`, "gallery", false, false))}
                     </div>
                 </div>
             )}
