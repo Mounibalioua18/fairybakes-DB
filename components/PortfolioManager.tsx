@@ -198,7 +198,7 @@ export const PortfolioManager: React.FC = () => {
       }
   };
 
-  const renderCard = (position: number, title: string, type: 'main' | 'gallery') => {
+  const renderCard = (position: number, title: string, type: 'main' | 'gallery', showDetails: boolean = true) => {
     const item = items.find(i => i.position === position);
     const isUploading = uploadingPosition === position;
 
@@ -228,30 +228,32 @@ export const PortfolioManager: React.FC = () => {
             )}
         </div>
 
-        <div className="space-y-2 mt-2">
-            <div>
-                <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-2">Title</label>
-                <input 
-                    type="text" 
-                    value={item?.title || ''} 
-                    onChange={(e) => updateItemDetails(position, 'title', e.target.value)}
-                    onBlur={() => item && saveItem(item)}
-                    placeholder="Enter title..."
-                    className="w-full text-sm font-bold text-stone-800 bg-stone-50/50 border border-stone-100 rounded-xl px-4 py-3 mt-1 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:bg-white transition-all shadow-sm"
-                />
+        {showDetails && (
+            <div className="space-y-2 mt-2">
+                <div>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-2">Title</label>
+                    <input 
+                        type="text" 
+                        value={item?.title || ''} 
+                        onChange={(e) => updateItemDetails(position, 'title', e.target.value)}
+                        onBlur={() => item && saveItem(item)}
+                        placeholder="Enter title..."
+                        className="w-full text-sm font-bold text-stone-800 bg-stone-50/50 border border-stone-100 rounded-xl px-4 py-3 mt-1 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:bg-white transition-all shadow-sm"
+                    />
+                </div>
+                <div>
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-2">Description</label>
+                    <textarea 
+                        value={item?.description || ''} 
+                        onChange={(e) => updateItemDetails(position, 'description', e.target.value)}
+                        onBlur={() => item && saveItem(item)}
+                        placeholder="Small description..."
+                        rows={2}
+                        className="w-full text-xs text-stone-600 bg-stone-50/50 border border-stone-100 rounded-xl px-4 py-3 mt-1 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:bg-white transition-all shadow-sm resize-none"
+                    />
+                </div>
             </div>
-            <div>
-                <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-2">Description</label>
-                <textarea 
-                    value={item?.description || ''} 
-                    onChange={(e) => updateItemDetails(position, 'description', e.target.value)}
-                    onBlur={() => item && saveItem(item)}
-                    placeholder="Small description..."
-                    rows={2}
-                    className="w-full text-xs text-stone-600 bg-stone-50/50 border border-stone-100 rounded-xl px-4 py-3 mt-1 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:bg-white transition-all shadow-sm resize-none"
-                />
-            </div>
-        </div>
+        )}
       </div>
     );
   };
@@ -326,7 +328,7 @@ export const PortfolioManager: React.FC = () => {
 
                     {/* 2 Fairy Way Pictures */}
                     <div className="w-full max-w-5xl lg:max-w-6xl px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
-                        {[7, 8].map((num, i) => renderCard(num, `Fairy Way Image ${i + 1}`, "gallery"))}
+                        {[7, 8].map((num, i) => renderCard(num, `Fairy Way Image ${i + 1}`, "gallery", false))}
                     </div>
                 </div>
             )}
