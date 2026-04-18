@@ -270,7 +270,7 @@ export const PortfolioManager: React.FC = () => {
             <div>
                 <h2 className="text-base md:text-lg font-serif font-bold text-stone-900">Portfolio & Assets</h2>
                 <p className="text-[10px] md:text-xs text-stone-500 max-w-lg mt-0.5">
-                    Upload images that will be displayed on the client side. Includes 1 main picture and 6 gallery pictures.
+                    Upload images that will be displayed on the client side. Includes 1 main picture and 8 gallery pictures.
                 </p>
             </div>
             
@@ -304,16 +304,16 @@ export const PortfolioManager: React.FC = () => {
                     </div>
                     
                     {/* Gallery Pictures Header */}
-                    <div className="w-full max-w-2xl mt-4 mb-6">
+                    <div className="w-full max-w-5xl mt-4 mb-6">
                         <h2 className="text-sm font-bold text-stone-800 flex items-center justify-center gap-2">
                             <ImageIcon size={16} className="text-rose-400" />
                             Gallery Pictures
                         </h2>
                     </div>
 
-                    {/* 6 Gallery Pictures */}
-                    <div className="w-full max-w-2xl flex flex-col gap-12">
-                        {[1, 2, 3, 4, 5, 6].map((num) => renderCard(num, `Gallery Image ${num}`, "gallery"))}
+                    {/* 8 Gallery Pictures */}
+                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => renderCard(num, `Gallery Image ${num}`, "gallery"))}
                     </div>
                 </div>
             )}
