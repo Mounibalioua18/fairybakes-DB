@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
-import { Image as ImageIcon, Upload, Loader2, Save, Trash2, Edit3, X, Check } from 'lucide-react';
+import { Image as ImageIcon, Upload, Loader2, Save, Trash2, Edit3, X, Check, ImagePlus } from 'lucide-react';
 
 interface PortfolioItem {
   id?: string;
