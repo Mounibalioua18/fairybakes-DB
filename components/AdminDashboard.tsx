@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { CakeOrder } from '../types';
 import { Trash2, User, Search, RefreshCw, Package, X, Calendar, LogOut, ChevronDown, Instagram, Maximize2, Filter, Check, Image as ImageIcon, ExternalLink, Mail, Lock, StickyNote, Save, Edit3, Plus, ImagePlus, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { PortfolioManager } from './PortfolioManager';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -17,7 +18,7 @@ interface NoteData {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [orders, setOrders] = useState<CakeOrder[]>([]);
-  const [activeTab, setActiveTab] = useState<'schedule' | 'taob'>('schedule');
+  const [activeTab, setActiveTab] = useState<'schedule' | 'taob' | 'portfolio'>('schedule');
   const [taobSignUps, setTaobSignUps] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -805,7 +806,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="bg-stone-900 text-white text-[9px] md:text-[11px] px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold shadow-sm">
-                    {activeTab === 'schedule' ? filteredOrders.length : filteredTaobSignUps.length}
+                    {activeTab === 'schedule' ? filteredOrders.length : activeTab === 'taob' ? filteredTaobSignUps.length : '7'}
                   </span>
                   
                   <div className="flex items-center space-x-1 bg-stone-100 rounded-full p-1 ml-2">
@@ -820,6 +821,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'taob' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
                     >
                       TAOB Sign Up's
+                    </button>
+                    <button 
+                      onClick={() => setActiveTab('portfolio')}
+                      className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'portfolio' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                    >
+                      Portfolio
                     </button>
                   </div>
                 </div>
@@ -875,16 +882,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
               )}
 
-              <div className="relative flex-1 md:w-64">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" size={12} />
-                <input 
-                  type="text" 
-                  placeholder="Search..."
-                  className={`w-full bg-stone-50/50 border border-stone-100 rounded-[1.25rem] pl-8 ${searchQuery ? 'pr-8' : 'pr-4'} py-2 text-[11px] md:text-xs focus:outline-none focus:ring-2 focus:ring-rose-100 transition-all`}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+              {activeTab !== 'portfolio' && (
+                <div className="relative flex-1 md:w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" size={12} />
+                  <input 
+                    type="text" 
+                    placeholder="Search..."
+                    className={`w-full bg-stone-50/50 border border-stone-100 rounded-[1.25rem] pl-8 ${searchQuery ? 'pr-8' : 'pr-4'} py-2 text-[11px] md:text-xs focus:outline-none focus:ring-2 focus:ring-rose-100 transition-all`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+              )}
               <button onClick={loadOrders} className={`hidden md:block p-2 text-stone-400 hover:bg-rose-50 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}>
                 <RefreshCw size={18} />
               </button>
@@ -995,7 +1004,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   )}
                 </div>
               </>
-            ) : (
+            ) : activeTab === 'taob' ? (
               <>
                 <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
                   <div className="col-span-3">Customer</div>
@@ -1078,7 +1087,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   )}
                 </div>
               </>
-            )}
+            ) : activeTab === 'portfolio' ? (
+                <PortfolioManager />
+            ) : null}
           </div>
         </div>
       )}

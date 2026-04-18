@@ -7,6 +7,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 async function inspect() {
   const { data: buckets, error } = await supabase.storage.listBuckets();
   console.log("BUCKETS:", JSON.stringify(buckets, null, 2), error);
+  
+  // Try to query site_content
+  const { data: site_data, error: site_error } = await supabase.from('site_content').select('*').limit(1);
+  console.log("SITE_CONTENT:", site_data, site_error);
 }
 
 inspect();
