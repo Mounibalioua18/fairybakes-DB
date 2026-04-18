@@ -904,8 +904,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           </div>
 
           {/* Spreadsheet Body */}
-          <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm border border-stone-100 overflow-hidden">
-            {activeTab === 'schedule' ? (
+          {activeTab !== 'portfolio' ? (
+            <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm border border-stone-100 overflow-hidden">
+              {activeTab === 'schedule' ? (
               <>
                 <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
                   <div className="col-span-2">Event Date</div>
@@ -1087,10 +1088,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   )}
                 </div>
               </>
-            ) : activeTab === 'portfolio' ? (
-                <PortfolioManager />
             ) : null}
-          </div>
+            </div>
+          ) : (
+            <div className="-mx-4 md:-mx-8">
+              <PortfolioManager />
+            </div>
+          )}
         </div>
       )}
     </div>

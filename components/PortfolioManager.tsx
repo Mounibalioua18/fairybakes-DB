@@ -257,7 +257,7 @@ export const PortfolioManager: React.FC = () => {
   };
 
   return (
-    <div className="max-h-[calc(100vh-140px)] overflow-y-auto scrollbar-hide pb-20">
+    <div className="w-full pb-20">
         <input 
             type="file" 
             ref={fileInputRef} 
@@ -266,7 +266,7 @@ export const PortfolioManager: React.FC = () => {
             className="hidden" 
         />
         
-        <div className="px-6 py-4 md:px-8 border-b border-stone-100 flex flex-col md:flex-row md:items-center justify-between gap-4 sticky top-0 bg-stone-50/80 backdrop-blur-md z-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
                 <h2 className="text-base md:text-lg font-serif font-bold text-stone-900">Portfolio & Assets</h2>
                 <p className="text-[10px] md:text-xs text-stone-500 max-w-lg mt-0.5">
@@ -280,12 +280,12 @@ export const PortfolioManager: React.FC = () => {
         </div>
 
         {error && (
-            <div className="m-6 md:m-8 p-4 bg-red-50 text-red-600 text-xs rounded-xl border border-red-100 flex flex-col gap-1">
+            <div className="mb-6 p-4 bg-red-50 text-red-600 text-xs rounded-xl border border-red-100 flex flex-col gap-1">
                 <strong>Notice:</strong> {error}
             </div>
         )}
 
-        <div className="p-6 md:p-8">
+        <div className="w-full mt-8">
             {isLoading ? (
                 <div className="py-20 flex justify-center">
                     <Loader2 className="animate-spin text-stone-300" size={32} />
