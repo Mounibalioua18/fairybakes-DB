@@ -798,45 +798,48 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       ) : (
         <div className="max-w-[1600px] mx-auto">
           {/* Header */}
-          <div className="flex flex-col md:flex-row items-center justify-between mb-4 md:mb-8 bg-white/80 backdrop-blur-sm p-3 md:p-4 rounded-3xl shadow-sm border border-stone-100 gap-3 md:gap-4 sticky top-2 md:top-4 z-50">
-            <div className="flex items-center justify-between w-full md:w-auto">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 md:w-10 md:h-10 bg-rose-50 rounded-lg md:rounded-xl flex items-center justify-center text-rose-400 shadow-sm border border-rose-100">
-                  <Package size={18} />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="bg-stone-900 text-white text-[9px] md:text-[11px] px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold shadow-sm">
-                    {activeTab === 'schedule' ? filteredOrders.length : activeTab === 'taob' ? filteredTaobSignUps.length : '7'}
-                  </span>
-                  
-                  <div className="flex items-center space-x-1 bg-stone-100 rounded-full p-1 ml-2">
-                    <button 
-                      onClick={() => setActiveTab('schedule')}
-                      className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'schedule' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
-                    >
-                      Studio Schedule
-                    </button>
-                    <button 
-                      onClick={() => setActiveTab('taob')}
-                      className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'taob' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
-                    >
-                      TAOB Sign Up's
-                    </button>
-                    <button 
-                      onClick={() => setActiveTab('portfolio')}
-                      className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'portfolio' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
-                    >
-                      Portfolio
-                    </button>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-8 bg-white/80 backdrop-blur-sm p-3 md:p-4 rounded-3xl shadow-sm border border-stone-100 gap-3 md:gap-4 sticky top-2 md:top-4 z-50">
+            <div className="flex flex-col md:flex-row w-full md:w-auto gap-3 md:gap-4">
+              <div className="flex items-center justify-between w-full md:w-auto">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-rose-50 rounded-lg md:rounded-xl flex items-center justify-center text-rose-400 shadow-sm border border-rose-100 shrink-0">
+                    <Package size={18} />
                   </div>
+                  <span className="bg-stone-900 text-white text-[9px] md:text-[11px] px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold shadow-sm">
+                    {activeTab === 'schedule' ? filteredOrders.length : activeTab === 'taob' ? filteredTaobSignUps.length : '9'}
+                  </span>
+                </div>
+                
+                {/* Mobile Refresh/Logout */}
+                <div className="flex md:hidden items-center gap-2">
+                  <button onClick={loadOrders} className={`p-2 bg-stone-50 rounded-lg text-stone-500 hover:text-stone-700 shadow-sm border border-stone-100 ${isLoading ? 'animate-spin' : ''}`}>
+                    <RefreshCw size={16} />
+                  </button>
+                  <button onClick={handleLogout} className="p-2 bg-rose-50 rounded-lg text-rose-500 hover:text-rose-600 shadow-sm border border-rose-100">
+                    <LogOut size={16} />
+                  </button>
                 </div>
               </div>
-              <div className="flex md:hidden items-center gap-1">
-                <button onClick={loadOrders} className={`p-2 text-stone-400 ${isLoading ? 'animate-spin' : ''}`}>
-                  <RefreshCw size={16} />
+
+              {/* Tabs */}
+              <div className="flex items-center space-x-1 bg-stone-100 rounded-full p-1 overflow-x-auto scrollbar-hide w-full md:w-auto">
+                <button 
+                  onClick={() => setActiveTab('schedule')}
+                  className={`flex-1 md:flex-none px-3 md:px-4 py-1.5 flex items-center justify-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'schedule' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                >
+                  Studio Schedule
                 </button>
-                <button onClick={handleLogout} className="p-2 text-stone-400">
-                  <LogOut size={16} />
+                <button 
+                  onClick={() => setActiveTab('taob')}
+                  className={`flex-1 md:flex-none px-3 md:px-4 py-1.5 flex items-center justify-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'taob' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                >
+                  TAOB Sign Up's
+                </button>
+                <button 
+                  onClick={() => setActiveTab('portfolio')}
+                  className={`flex-1 md:flex-none px-3 md:px-4 py-1.5 flex items-center justify-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'portfolio' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                >
+                  Portfolio
                 </button>
               </div>
             </div>
