@@ -203,15 +203,15 @@ export const PortfolioManager: React.FC = () => {
     const isUploading = uploadingPosition === position;
 
     return (
-      <div key={position} className={`bg-white border rounded-2xl p-4 flex flex-col gap-3 w-full shadow-sm border-stone-200`}>
+      <div key={position} className={`bg-white border rounded-[2rem] p-5 md:p-6 flex flex-col gap-4 w-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-stone-100 hover:shadow-[0_8px_30px_rgb(225,29,72,0.08)] hover:border-rose-100 transition-all duration-500 group/card`}>
         <div className="flex justify-between items-center px-1">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-stone-600">{title}</h3>
-            {isUploading && <Loader2 size={14} className="animate-spin text-rose-400" />}
+            <h3 className="text-sm font-serif font-bold text-stone-700 tracking-wide">{title}</h3>
+            {isUploading && <Loader2 size={16} className="animate-spin text-rose-400" />}
         </div>
         
         <div 
             onClick={() => triggerUpload(position)}
-            className={`w-full aspect-video rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer overflow-hidden transition-all relative group bg-stone-50 ${item?.image_url ? 'border-transparent' : 'border-stone-200 hover:border-rose-300 hover:bg-rose-50/30'}`}
+            className={`w-full aspect-[4/5] rounded-2xl border-2 border-dashed flex items-center justify-center cursor-pointer overflow-hidden transition-all relative group bg-stone-50 ${item?.image_url ? 'border-transparent shadow-inner' : 'border-stone-200 hover:border-rose-300 hover:bg-rose-50/30'}`}
         >
             {item?.image_url ? (
                 <>
@@ -230,25 +230,25 @@ export const PortfolioManager: React.FC = () => {
 
         <div className="space-y-2 mt-2">
             <div>
-                <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400 ml-1">Title</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-2">Title</label>
                 <input 
                     type="text" 
                     value={item?.title || ''} 
                     onChange={(e) => updateItemDetails(position, 'title', e.target.value)}
                     onBlur={() => item && saveItem(item)}
                     placeholder="Enter title..."
-                    className="w-full text-xs font-bold text-stone-800 bg-stone-50 border border-stone-100 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-rose-200"
+                    className="w-full text-sm font-bold text-stone-800 bg-stone-50/50 border border-stone-100 rounded-xl px-4 py-3 mt-1 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:bg-white transition-all shadow-sm"
                 />
             </div>
             <div>
-                <label className="text-[9px] font-bold uppercase tracking-widest text-stone-400 ml-1">Description</label>
+                <label className="text-[10px] font-bold uppercase tracking-widest text-stone-400 ml-2">Description</label>
                 <textarea 
                     value={item?.description || ''} 
                     onChange={(e) => updateItemDetails(position, 'description', e.target.value)}
                     onBlur={() => item && saveItem(item)}
                     placeholder="Small description..."
                     rows={2}
-                    className="w-full text-[11px] text-stone-600 bg-stone-50 border border-stone-100 rounded-lg px-3 py-2 mt-1 focus:outline-none focus:ring-1 focus:ring-rose-200 resize-none"
+                    className="w-full text-xs text-stone-600 bg-stone-50/50 border border-stone-100 rounded-xl px-4 py-3 mt-1 focus:outline-none focus:ring-2 focus:ring-rose-100 focus:bg-white transition-all shadow-sm resize-none"
                 />
             </div>
         </div>
@@ -266,16 +266,16 @@ export const PortfolioManager: React.FC = () => {
             className="hidden" 
         />
         
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col items-center justify-center text-center gap-4 mb-16 mt-8">
             <div>
-                <h2 className="text-base md:text-lg font-serif font-bold text-stone-900">Portfolio & Assets</h2>
-                <p className="text-[10px] md:text-xs text-stone-500 max-w-lg mt-0.5">
+                <h2 className="text-3xl md:text-5xl font-serif font-bold text-stone-900 tracking-tight">Portfolio & Assets</h2>
+                <p className="text-xs md:text-sm text-stone-500 max-w-lg mx-auto mt-4 leading-relaxed">
                     Upload images that will be displayed on the client side. Includes 1 main picture, 6 garden pictures, and 2 fairy way pictures.
                 </p>
             </div>
             
-            <div className="flex items-center gap-3">
-                {isSaving && <span className="text-[10px] text-stone-400 flex items-center gap-1.5"><Loader2 size={12} className="animate-spin" /> Saving...</span>}
+            <div className="h-4">
+                {isSaving && <span className="text-xs font-medium text-rose-400 flex items-center justify-center gap-2 bg-rose-50 px-3 py-1.5 rounded-full"><Loader2 size={14} className="animate-spin" /> Saving...</span>}
             </div>
         </div>
 
@@ -293,12 +293,12 @@ export const PortfolioManager: React.FC = () => {
             ) : (
                 <div className="flex flex-col items-center">
                     {/* Main Picture */}
-                    <div className="w-full max-w-2xl mb-12 flex flex-col items-center">
-                        <h2 className="text-sm font-bold text-stone-800 mb-4 flex items-center justify-center gap-2">
-                            <ImageIcon size={16} className="text-rose-400" />
+                    <div className="w-full max-w-2xl mb-20 flex flex-col items-center">
+                        <h2 className="text-2xl md:text-4xl font-serif font-bold text-stone-800 mb-8 flex items-center justify-center gap-3">
+                            <ImageIcon size={28} className="text-rose-400" />
                             Main Highlight Picture
                         </h2>
-                        <div className="w-full">
+                        <div className="w-full max-w-md mx-auto">
                             {renderCard(0, "Main Graphic", "main")}
                         </div>
                     </div>
