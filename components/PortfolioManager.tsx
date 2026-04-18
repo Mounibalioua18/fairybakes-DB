@@ -203,7 +203,7 @@ export const PortfolioManager: React.FC = () => {
     const isUploading = uploadingPosition === position;
 
     return (
-      <div key={position} className={`bg-white border rounded-[2rem] p-5 md:p-6 flex flex-col gap-4 w-full shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-stone-100 hover:shadow-[0_8px_30px_rgb(225,29,72,0.08)] hover:border-rose-100 transition-all duration-500 group/card`}>
+      <div key={position} className={`bg-white border rounded-[2rem] p-5 md:p-6 flex flex-col gap-4 w-full max-w-[280px] md:max-w-none mx-auto shadow-[0_8px_30px_rgb(0,0,0,0.04)] border-stone-100 hover:shadow-[0_8px_30px_rgb(225,29,72,0.08)] hover:border-rose-100 transition-all duration-500 group/card`}>
         <div className="flex justify-between items-center px-1">
             <h3 className="text-sm font-serif font-bold text-stone-700 tracking-wide">{title}</h3>
             {isUploading && <Loader2 size={16} className="animate-spin text-rose-400" />}
@@ -293,39 +293,39 @@ export const PortfolioManager: React.FC = () => {
             ) : (
                 <div className="flex flex-col items-center">
                     {/* Main Picture */}
-                    <div className="w-full max-w-2xl mb-20 flex flex-col items-center">
+                    <div className="w-full max-w-7xl px-4 md:px-8 mb-24 flex flex-col items-center">
                         <h2 className="text-2xl md:text-4xl font-serif font-bold text-stone-800 mb-8 flex items-center justify-center gap-3">
                             <ImageIcon size={28} className="text-rose-400" />
                             Main Highlight Picture
                         </h2>
-                        <div className="w-full max-w-md mx-auto">
+                        <div className="w-full max-w-lg lg:max-w-2xl mx-auto">
                             {renderCard(0, "Main Graphic", "main")}
                         </div>
                     </div>
                     
                     {/* The Fairies' Garden Header */}
-                    <div className="w-full max-w-5xl mt-8 mb-8">
-                        <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-800 flex items-center justify-center gap-3">
+                    <div className="w-full max-w-7xl px-4 md:px-8 mt-8 mb-8">
+                        <h2 className="text-2xl md:text-4xl font-serif font-bold text-stone-800 flex items-center justify-center gap-3">
                             <ImageIcon size={24} className="text-rose-400" />
                             The Fairies' Garden
                         </h2>
                     </div>
 
                     {/* 6 Fairies Garden Pictures */}
-                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div className="w-full max-w-7xl px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-14 mb-24">
                         {[1, 2, 3, 4, 5, 6].map((num) => renderCard(num, `Garden Image ${num}`, "gallery"))}
                     </div>
 
                     {/* The Fairy Way Header */}
-                    <div className="w-full max-w-5xl mt-6 mb-8">
-                        <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-800 flex items-center justify-center gap-3">
+                    <div className="w-full max-w-7xl px-4 md:px-8 mt-6 mb-8">
+                        <h2 className="text-2xl md:text-4xl font-serif font-bold text-stone-800 flex items-center justify-center gap-3">
                             <ImageIcon size={24} className="text-rose-400" />
                             The Fairy Way
                         </h2>
                     </div>
 
                     {/* 2 Fairy Way Pictures */}
-                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+                    <div className="w-full max-w-5xl lg:max-w-6xl px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
                         {[7, 8].map((num, i) => renderCard(num, `Fairy Way Image ${i + 1}`, "gallery"))}
                     </div>
                 </div>
