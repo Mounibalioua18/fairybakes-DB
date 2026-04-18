@@ -819,7 +819,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       onClick={() => setActiveTab('taob')}
                       className={`px-3 md:px-4 py-1 flex items-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'taob' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
                     >
-                      TAOB Sign In's
+                      TAOB Sign Up's
                     </button>
                   </div>
                 </div>
