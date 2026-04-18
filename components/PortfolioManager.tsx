@@ -203,7 +203,7 @@ export const PortfolioManager: React.FC = () => {
     const isUploading = uploadingPosition === position;
 
     return (
-      <div key={position} className={`flex flex-col gap-3 w-full`}>
+      <div key={position} className={`bg-white border rounded-2xl p-4 flex flex-col gap-3 w-full shadow-sm border-stone-200`}>
         <div className="flex justify-between items-center px-1">
             <h3 className="text-xs font-bold uppercase tracking-widest text-stone-600">{title}</h3>
             {isUploading && <Loader2 size={14} className="animate-spin text-rose-400" />}
@@ -270,7 +270,7 @@ export const PortfolioManager: React.FC = () => {
             <div>
                 <h2 className="text-base md:text-lg font-serif font-bold text-stone-900">Portfolio & Assets</h2>
                 <p className="text-[10px] md:text-xs text-stone-500 max-w-lg mt-0.5">
-                    Upload images that will be displayed on the client side. Includes 1 main picture and 8 gallery pictures.
+                    Upload images that will be displayed on the client side. Includes 1 main picture, 6 garden pictures, and 2 fairy way pictures.
                 </p>
             </div>
             
@@ -303,17 +303,30 @@ export const PortfolioManager: React.FC = () => {
                         </div>
                     </div>
                     
-                    {/* Gallery Pictures Header */}
-                    <div className="w-full max-w-5xl mt-4 mb-6">
-                        <h2 className="text-sm font-bold text-stone-800 flex items-center justify-center gap-2">
-                            <ImageIcon size={16} className="text-rose-400" />
-                            Gallery Pictures
+                    {/* The Fairies' Garden Header */}
+                    <div className="w-full max-w-5xl mt-8 mb-8">
+                        <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-800 flex items-center justify-center gap-3">
+                            <ImageIcon size={24} className="text-rose-400" />
+                            The Fairies' Garden
                         </h2>
                     </div>
 
-                    {/* 8 Gallery Pictures */}
-                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => renderCard(num, `Gallery Image ${num}`, "gallery"))}
+                    {/* 6 Fairies Garden Pictures */}
+                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        {[1, 2, 3, 4, 5, 6].map((num) => renderCard(num, `Garden Image ${num}`, "gallery"))}
+                    </div>
+
+                    {/* The Fairy Way Header */}
+                    <div className="w-full max-w-5xl mt-6 mb-8">
+                        <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-800 flex items-center justify-center gap-3">
+                            <ImageIcon size={24} className="text-rose-400" />
+                            The Fairy Way
+                        </h2>
+                    </div>
+
+                    {/* 2 Fairy Way Pictures */}
+                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+                        {[7, 8].map((num, i) => renderCard(num, `Fairy Way Image ${i + 1}`, "gallery"))}
                     </div>
                 </div>
             )}
