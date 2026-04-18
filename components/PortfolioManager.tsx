@@ -203,15 +203,15 @@ export const PortfolioManager: React.FC = () => {
     const isUploading = uploadingPosition === position;
 
     return (
-      <div key={position} className={`bg-white border rounded-2xl p-4 flex flex-col gap-3 ${type === 'main' ? 'border-rose-200 shadow-sm md:col-span-2' : 'border-stone-200'}`}>
-        <div className="flex justify-between items-center">
+      <div key={position} className={`flex flex-col gap-3 w-full`}>
+        <div className="flex justify-between items-center px-1">
             <h3 className="text-xs font-bold uppercase tracking-widest text-stone-600">{title}</h3>
             {isUploading && <Loader2 size={14} className="animate-spin text-rose-400" />}
         </div>
         
         <div 
             onClick={() => triggerUpload(position)}
-            className={`w-full aspect-video md:aspect-square ${type === 'main' ? 'md:aspect-video' : ''} rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer overflow-hidden transition-all relative group bg-stone-50 ${item?.image_url ? 'border-transparent' : 'border-stone-200 hover:border-rose-300 hover:bg-rose-50/30'}`}
+            className={`w-full aspect-video rounded-xl border-2 border-dashed flex items-center justify-center cursor-pointer overflow-hidden transition-all relative group bg-stone-50 ${item?.image_url ? 'border-transparent' : 'border-stone-200 hover:border-rose-300 hover:bg-rose-50/30'}`}
         >
             {item?.image_url ? (
                 <>
@@ -270,7 +270,7 @@ export const PortfolioManager: React.FC = () => {
             <div>
                 <h2 className="text-base md:text-lg font-serif font-bold text-stone-900">Portfolio & Assets</h2>
                 <p className="text-[10px] md:text-xs text-stone-500 max-w-lg mt-0.5">
-                    Upload images that will be displayed on the client side. Includes 1 main picture and 6 gallery pictures. Images are preserved in high quality.
+                    Upload images that will be displayed on the client side. Includes 1 main picture and 6 gallery pictures.
                 </p>
             </div>
             
@@ -304,16 +304,15 @@ export const PortfolioManager: React.FC = () => {
                     </div>
                     
                     {/* Gallery Pictures Header */}
-                    <div className="w-full max-w-5xl mt-4 mb-6">
+                    <div className="w-full max-w-2xl mt-4 mb-6">
                         <h2 className="text-sm font-bold text-stone-800 flex items-center justify-center gap-2">
                             <ImageIcon size={16} className="text-rose-400" />
                             Gallery Pictures
                         </h2>
-                        <p className="text-center text-[10px] text-stone-500 mt-1">These will be displayed in a 3x2 grid</p>
                     </div>
 
                     {/* 6 Gallery Pictures */}
-                    <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="w-full max-w-2xl flex flex-col gap-12">
                         {[1, 2, 3, 4, 5, 6].map((num) => renderCard(num, `Gallery Image ${num}`, "gallery"))}
                     </div>
                 </div>
