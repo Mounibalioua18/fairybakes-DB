@@ -52,6 +52,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [selectedTaob, setSelectedTaob] = useState<any | null>(null);
   const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
   const monthPickerRef = useRef<HTMLDivElement>(null);
+  
+  // Settings State
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(true);
+  const [isTogglingForm, setIsTogglingForm] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -59,9 +63,61 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     });
   }, []);
 
+  const loadSettings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('portfolio')
+        .select('description')
+        .eq('title', 'SYSTEM_SETTING_ORDER_FORM')
+        .single();
+      if (data && data.description) {
+        setIsFormOpen(data.description === 'true');
+      }
+    } catch (e) {
+      console.log('Settings fetch error');
+    }
+  };
+
+  const toggleFormState = async () => {
+    setIsTogglingForm(true);
+    const newVal = !isFormOpen;
+    setIsFormOpen(newVal);
+    
+    try {
+      const stringVal = newVal ? 'true' : 'false';
+      // Use portfolio table. We assume it might not exist yet if they've never toggled.
+      // So fetch it first, and if it fails, insert. If it succeeds, update.
+      const { data } = await supabase
+         .from('portfolio')
+         .select('id')
+         .eq('title', 'SYSTEM_SETTING_ORDER_FORM')
+         .single();
+         
+      if (data) {
+         await supabase
+           .from('portfolio')
+           .update({ description: stringVal })
+           .eq('title', 'SYSTEM_SETTING_ORDER_FORM');
+      } else {
+         await supabase
+           .from('portfolio')
+           .insert({
+              title: 'SYSTEM_SETTING_ORDER_FORM',
+              description: stringVal,
+              type: 'setting',
+              position: 9999
+           });
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    setIsTogglingForm(false);
+  };
+
   useEffect(() => {
     if (isAuthenticated) {
       loadOrders();
+      loadSettings();
     }
   }, [isAuthenticated]);
 
@@ -814,6 +870,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 
                 {/* Mobile Refresh/Logout */}
                 <div className="flex md:hidden items-center gap-2">
+                  {activeTab === 'schedule' && (
+                    <button
+                      onClick={toggleFormState}
+                      disabled={isTogglingForm}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all shadow-sm ${
+                        isFormOpen 
+                          ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                          : 'bg-stone-100 text-stone-500 border border-stone-200'
+                      } ${isTogglingForm ? 'opacity-50 cursor-wait' : ''}`}
+                    >
+                      <div className={`w-1.5 h-1.5 rounded-full ${isFormOpen ? 'bg-rose-500 animate-pulse' : 'bg-stone-400'}`} />
+                      {isFormOpen ? 'ON' : 'OFF'}
+                    </button>
+                  )}
                   <button onClick={loadOrders} className={`p-2 bg-stone-50 rounded-lg text-stone-500 hover:text-stone-700 shadow-sm border border-stone-100 ${isLoading ? 'animate-spin' : ''}`}>
                     <RefreshCw size={16} />
                   </button>
@@ -898,6 +968,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
+              )}
+              {activeTab === 'schedule' && (
+                <button
+                  onClick={toggleFormState}
+                  disabled={isTogglingForm}
+                  className={`hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
+                    isFormOpen 
+                      ? 'bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100'
+                      : 'bg-stone-100 text-stone-500 border border-stone-200 hover:bg-stone-200'
+                  } ${isTogglingForm ? 'opacity-50 cursor-wait' : ''}`}
+                  title={isFormOpen ? "Orders are OPEN" : "Orders are CLOSED"}
+                >
+                  <div className={`w-2 h-2 rounded-full ${isFormOpen ? 'bg-rose-500 animate-pulse' : 'bg-stone-400'}`} />
+                  {isFormOpen ? 'Form ON' : 'Form OFF'}
+                </button>
               )}
               <button onClick={loadOrders} className={`hidden md:block p-2 text-stone-400 hover:bg-rose-50 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}>
                 <RefreshCw size={18} />

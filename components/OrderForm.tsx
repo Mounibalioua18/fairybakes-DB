@@ -8,8 +8,29 @@ export const OrderForm: React.FC = () => {
   const [status, setStatus] = useState<FormStatus>(FormStatus.IDLE);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
+  // Fetch form status setting
+  React.useEffect(() => {
+    const fetchFormStatus = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('portfolio')
+          .select('description')
+          .eq('title', 'SYSTEM_SETTING_ORDER_FORM')
+          .single();
+        
+        if (data && data.description === 'false') {
+          setIsFormOpen(false);
+        }
+      } catch (err) {
+        console.log('Using default form setting');
+      }
+    };
+    fetchFormStatus();
+  }, []);
+
   const now = new Date();
   const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   const lastDayNextMonth = new Date(now.getFullYear(), now.getMonth() + 2, 0);
@@ -181,9 +202,23 @@ export const OrderForm: React.FC = () => {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-stone-50 p-8 md:p-12 rounded-[2.5rem] shadow-sm border border-stone-100">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
+          <form onSubmit={handleSubmit} className="bg-stone-50 p-8 md:p-12 rounded-[2.5rem] shadow-sm border border-stone-100 relative overflow-hidden">
+            {!isFormOpen && (
+              <div className="absolute inset-0 z-10 backdrop-blur-md bg-stone-50/80 flex flex-col items-center justify-center p-8 text-center border border-stone-200/50 rounded-[2.5rem]">
+                <div className="w-16 h-16 bg-rose-50 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-rose-100">
+                  <AlertCircle className="text-rose-400" size={32} />
+                </div>
+                <h3 className="text-2xl font-serif text-stone-900 mb-4">Orders are currently closed</h3>
+                <p className="text-stone-600 leading-relaxed max-w-sm mx-auto">
+                  The orders will open towards the end of the month. Keep an eye on Instagram for the update!
+                </p>
+              </div>
+            )}
+            
+            <div className={`transition-opacity duration-300 ${!isFormOpen ? 'opacity-30 blur-sm pointer-events-none' : ''}`}>
+              <fieldset disabled={!isFormOpen}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
                 <label className="block text-xs uppercase tracking-widest text-stone-500 mb-2 font-bold">Name</label>
                 <input 
                   required
@@ -311,13 +346,15 @@ export const OrderForm: React.FC = () => {
             </div>
 
             <button 
-              disabled={status === FormStatus.SUBMITTING}
+              disabled={status === FormStatus.SUBMITTING || !isFormOpen}
               type="submit" 
               className="w-full bg-rose-400 text-white rounded-full py-4 uppercase tracking-[0.2em] text-sm font-semibold hover:bg-rose-500 transition-all shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50"
             >
               <Upload size={18} className={status === FormStatus.SUBMITTING ? "animate-bounce" : ""} />
               <span>{status === FormStatus.SUBMITTING ? "Envoi en cours..." : "Submit Order"}</span>
             </button>
+            </fieldset>
+            </div>
           </form>
         </div>
       </div>
