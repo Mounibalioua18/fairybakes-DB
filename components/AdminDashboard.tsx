@@ -69,7 +69,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         .from('portfolio')
         .select('description')
         .eq('title', 'SYSTEM_SETTING_ORDER_FORM')
-        .single();
+        .maybeSingle(); // Prevents throwing if it doesn't exist yet
       if (data && data.description) {
         setIsFormOpen(data.description === 'true');
       }
@@ -85,13 +85,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
     
     try {
       const stringVal = newVal ? 'true' : 'false';
-      // Use portfolio table. We assume it might not exist yet if they've never toggled.
-      // So fetch it first, and if it fails, insert. If it succeeds, update.
-      const { data } = await supabase
+      
+      const { data, error } = await supabase
          .from('portfolio')
          .select('id')
          .eq('title', 'SYSTEM_SETTING_ORDER_FORM')
-         .single();
+         .maybeSingle(); // Prevents throwing if it doesn't exist yet
          
       if (data) {
          await supabase
@@ -101,15 +100,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       } else {
          await supabase
            .from('portfolio')
-           .insert({
+           .insert([{
               title: 'SYSTEM_SETTING_ORDER_FORM',
               description: stringVal,
-              type: 'setting',
+              type: 'gallery', // Use gallery to avoid type constraints
               position: 9999
-           });
+           }]);
       }
     } catch (e) {
-      console.error(e);
+      console.error('Save toggle error:', e);
     }
     setIsTogglingForm(false);
   };
