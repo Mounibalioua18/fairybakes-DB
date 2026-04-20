@@ -276,7 +276,7 @@ export const PortfolioManager: React.FC = () => {
             <div>
                 <h2 className="text-3xl md:text-5xl font-serif font-bold text-stone-900 tracking-tight">Portfolio & Assets</h2>
                 <p className="text-xs md:text-sm text-stone-500 max-w-lg mx-auto mt-4 leading-relaxed">
-                    Upload images that will be displayed on the client side. Includes 1 main picture, 6 garden pictures, 2 fairy way pictures, and 3 TAOB pictures.
+                    Upload images that will be displayed on the client side. Includes 1 main picture, 6 garden pictures, 2 fairy way pictures, 3 TAOB pictures, and 1 Guide PDF cover.
                 </p>
             </div>
             
@@ -344,8 +344,21 @@ export const PortfolioManager: React.FC = () => {
                     </div>
 
                     {/* 3 TAOB Pictures */}
-                    <div className="w-full max-w-7xl px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-14">
+                    <div className="w-full max-w-7xl px-4 md:px-8 grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-14 mb-24">
                         {[9, 10, 11].map((num, i) => renderCard(num, `TAOB Image ${i + 1}`, "gallery", false, false))}
+                    </div>
+
+                    {/* Guide PDF Header */}
+                    <div className="w-full max-w-7xl px-4 md:px-8 mt-6 mb-8">
+                        <h2 className="text-2xl md:text-4xl font-serif font-bold text-stone-800 flex items-center justify-center gap-3">
+                            <ImageIcon size={24} className="text-rose-400" />
+                            Guide PDF
+                        </h2>
+                    </div>
+
+                    {/* Guide PDF Picture (Position 12) */}
+                    <div className="w-full max-w-lg lg:max-w-2xl px-4 md:px-8 mb-24 mx-auto">
+                        {renderCard(12, `Guide PDF Cover`, "gallery", false, false)}
                     </div>
                 </div>
             )}
