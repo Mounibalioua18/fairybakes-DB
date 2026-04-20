@@ -276,7 +276,7 @@ export const PortfolioManager: React.FC = () => {
             <div>
                 <h2 className="text-3xl md:text-5xl font-serif font-bold text-stone-900 tracking-tight">Portfolio & Assets</h2>
                 <p className="text-xs md:text-sm text-stone-500 max-w-lg mx-auto mt-4 leading-relaxed">
-                    Upload images that will be displayed on the client side. Includes 1 main picture, 6 garden pictures, 2 fairy way pictures, 3 TAOB pictures, and 1 Guide PDF cover.
+                    Upload images that will be displayed on the client side. Includes 1 main picture, 6 garden pictures, 2 fairy way pictures, 3 TAOB pictures, and 2 Guide PDF covers.
                 </p>
             </div>
             
@@ -356,9 +356,9 @@ export const PortfolioManager: React.FC = () => {
                         </h2>
                     </div>
 
-                    {/* Guide PDF Picture (Position 12) */}
-                    <div className="w-full max-w-lg lg:max-w-2xl px-4 md:px-8 mb-24 mx-auto">
-                        {renderCard(12, `Guide PDF Cover`, "gallery", false, false)}
+                    {/* Guide PDF Pictures (Positions 12 & 13) */}
+                    <div className="w-full max-w-5xl lg:max-w-6xl px-4 md:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 mb-24 mx-auto">
+                        {[12, 13].map((num, i) => renderCard(num, `Guide PDF Cover ${i + 1}`, "gallery", false, false))}
                     </div>
                 </div>
             )}
