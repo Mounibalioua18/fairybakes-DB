@@ -466,68 +466,78 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
   return (
     <div className="min-h-screen bg-[#fdfaf6] pt-4 md:pt-8 pb-10 px-2 md:px-12 relative">
-      {/* Note Paper Popover */}
+      {/* Note Editor Modal */}
       {editingNoteId && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-stone-900/20 backdrop-blur-[2px] animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md animate-in fade-in duration-300">
           <div 
             ref={noteEditorRef}
-            className="w-full max-w-sm bg-[#fef9c3] shadow-2xl rounded-sm p-6 md:p-8 relative transform rotate-1 shadow-[10px_10px_20px_rgba(0,0,0,0.1)] border-t-[30px] border-amber-200/50 max-h-[90vh] flex flex-col"
+            className="w-full max-w-lg bg-white/95 backdrop-blur-2xl shadow-2xl rounded-3xl p-6 md:p-8 relative border border-stone-200/50 max-h-[90vh] flex flex-col transform transition-all animate-in zoom-in-95"
           >
-             <div className="absolute top-[-24px] left-1/2 -translate-x-1/2 flex items-center gap-2">
-                <StickyNote size={12} className="text-amber-600" />
-                <span className="text-[10px] uppercase tracking-[0.2em] font-black text-amber-800 font-serif">Studio Note</span>
+             <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center border border-amber-100">
+                    <StickyNote size={14} className="text-amber-500" />
+                  </div>
+                  <h3 className="text-lg font-serif font-bold text-stone-800">Studio Note</h3>
+                </div>
+                <button 
+                  onClick={() => { saveNote(editingNoteId, noteContent); setEditingNoteId(null); }}
+                  className="w-8 h-8 rounded-full bg-stone-50 flex items-center justify-center text-stone-400 hover:text-stone-900 hover:bg-stone-100 transition-colors"
+                >
+                  <X size={16} />
+                </button>
              </div>
-             
-             <button 
-              onClick={() => { saveNote(editingNoteId, noteContent); setEditingNoteId(null); }}
-              className="absolute top-2 right-2 text-amber-900/40 hover:text-amber-900 transition-colors"
-             >
-               <X size={16} />
-             </button>
 
-             <div className="flex-1 overflow-y-auto scrollbar-hide py-2">
+             <div className="flex-1 overflow-y-auto scrollbar-hide py-2 flex flex-col gap-6">
                <textarea
                  autoFocus
                  value={noteContent.text}
                  onChange={(e) => setNoteContent({ ...noteContent, text: e.target.value })}
-                 placeholder="write a note"
-                 className="w-full min-h-[150px] bg-transparent border-none text-stone-800 text-base italic leading-relaxed focus:outline-none resize-none font-serif placeholder:text-stone-300"
+                 placeholder="Type your private studio note here..."
+                 className="w-full min-h-[160px] bg-stone-50/50 border border-stone-100 rounded-2xl p-5 text-stone-700 text-base leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-200/50 resize-none font-serif placeholder:text-stone-300 transition-all shadow-inner"
                />
 
                {/* Note Photos Grid */}
-               <div className="mt-4 grid grid-cols-2 gap-3">
-                 {noteContent.images.map((url, idx) => (
-                   <div key={idx} className="relative group aspect-square rounded bg-white shadow-sm border border-amber-200/50 p-1">
-                     <img src={url} className="w-full h-full object-cover rounded-[2px]" alt="Note attachment" />
-                     <button 
-                       onClick={() => removeNoteImage(idx)}
-                       className="absolute -top-1.5 -right-1.5 bg-rose-500 text-white rounded-full p-0.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
-                     >
-                       <X size={10} />
-                     </button>
-                     <a 
-                       href={url} 
-                       target="_blank" 
-                       rel="noopener noreferrer"
-                       className="absolute inset-0 z-0"
-                     />
+               {(noteContent.images.length > 0 || isUploadingImage || noteContent.images.length < 4) && (
+                 <div>
+                   <h4 className="text-xs uppercase tracking-widest font-bold text-stone-400 mb-3 ml-1">Reference Images</h4>
+                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                     {noteContent.images.map((url, idx) => (
+                       <div key={idx} className="relative group aspect-square rounded-2xl overflow-hidden bg-stone-100 shadow-sm border border-stone-200/50">
+                         <img src={url} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Note attachment" />
+                         <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors pointer-events-none" />
+                         <button 
+                           onClick={() => removeNoteImage(idx)}
+                           className="absolute top-2 right-2 bg-white/90 text-red-500 rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                         >
+                           <X size={12} />
+                         </button>
+                         <a 
+                           href={url} 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           className="absolute inset-0 z-0"
+                         />
+                       </div>
+                     ))}
+                     
+                     {isUploadingImage ? (
+                       <div className="aspect-square rounded-2xl border-2 border-dashed border-amber-200 flex flex-col items-center justify-center bg-amber-50/30 gap-2">
+                         <Loader2 size={18} className="text-amber-500 animate-spin" />
+                         <span className="text-[10px] uppercase font-bold text-amber-500/70">Uploading</span>
+                       </div>
+                     ) : noteContent.images.length < 4 ? (
+                       <button 
+                         onClick={() => fileInputRef.current?.click()}
+                         className="aspect-square rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center gap-1.5 text-stone-400 hover:text-amber-500 hover:border-amber-200 hover:bg-amber-50/30 transition-all group"
+                       >
+                         <ImagePlus size={20} className="group-hover:scale-110 transition-transform" />
+                         <span className="text-[9px] uppercase font-bold tracking-wider">Add Photo</span>
+                       </button>
+                     ) : null}
                    </div>
-                 ))}
-                 
-                 {isUploadingImage ? (
-                   <div className="aspect-square rounded border-2 border-dashed border-amber-300 flex items-center justify-center bg-amber-50/50">
-                     <Loader2 size={20} className="text-amber-600 animate-spin" />
-                   </div>
-                 ) : noteContent.images.length < 4 ? (
-                   <button 
-                     onClick={() => fileInputRef.current?.click()}
-                     className="aspect-square rounded border-2 border-dashed border-amber-300 flex flex-col items-center justify-center gap-1 text-amber-600 hover:bg-white transition-colors"
-                   >
-                     <ImagePlus size={20} />
-                     <span className="text-[8px] uppercase font-bold">Add Photo</span>
-                   </button>
-                 ) : null}
-               </div>
+                 </div>
+               )}
              </div>
 
              <input 
@@ -538,17 +548,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                className="hidden" 
              />
 
-             <div className="flex justify-end mt-4 pt-4 border-t border-amber-200/30">
-               {isSavingNote ? (
-                 <span className="text-[9px] uppercase font-bold text-amber-700 animate-pulse">Syncing...</span>
-               ) : (
-                 <button 
-                   onClick={() => { saveNote(editingNoteId, noteContent); setEditingNoteId(null); }}
-                   className="text-[9px] uppercase tracking-widest font-black text-amber-900 hover:text-rose-500 transition-colors"
-                 >
-                   Save & Close
-                 </button>
-               )}
+             <div className="flex justify-between items-center mt-6 pt-4 border-t border-stone-100">
+               <div className="text-[10px] text-stone-400 flex items-center gap-1.5">
+                 {isSavingNote ? (
+                   <>
+                     <Loader2 size={12} className="animate-spin text-amber-500" />
+                     <span className="uppercase font-bold text-amber-600">Syncing...</span>
+                   </>
+                 ) : (
+                   <span className="italic">Auto-saves on close</span>
+                 )}
+               </div>
+               <button 
+                 onClick={() => { saveNote(editingNoteId, noteContent); setEditingNoteId(null); }}
+                 disabled={isSavingNote}
+                 className="bg-stone-900 text-white px-6 py-2.5 rounded-xl text-xs uppercase tracking-widest font-semibold hover:bg-rose-500 transition-colors shadow-md disabled:opacity-50"
+               >
+                 Done
+               </button>
              </div>
           </div>
         </div>
