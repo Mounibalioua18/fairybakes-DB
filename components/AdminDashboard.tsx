@@ -471,9 +471,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md animate-in fade-in duration-300">
           <div 
             ref={noteEditorRef}
-            className="w-full max-w-lg bg-white/95 backdrop-blur-2xl shadow-2xl rounded-3xl p-6 md:p-8 relative border border-stone-200/50 max-h-[90vh] flex flex-col transform transition-all animate-in zoom-in-95"
+            className="w-full max-w-[440px] bg-white/95 backdrop-blur-2xl shadow-2xl rounded-3xl py-6 md:py-7 px-5 md:px-6 relative border border-stone-200/50 max-h-[90vh] flex flex-col transform transition-all animate-in zoom-in-95"
           >
-             <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
+             <div className="flex items-center justify-between mb-5 pb-4 border-b border-stone-100 flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center border border-stone-200">
                     <StickyNote size={14} className="text-stone-800" />
@@ -488,7 +488,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </button>
              </div>
 
-             <div className="flex-1 overflow-y-auto scrollbar-hide py-2 flex flex-col gap-6">
+             <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-900 [&::-webkit-scrollbar-thumb]:rounded-full py-2 flex flex-col gap-6 -mr-3 pr-3 md:-mr-4 md:pr-4">
                <textarea
                  value={noteContent.text}
                  onChange={(e) => setNoteContent({ ...noteContent, text: e.target.value })}
@@ -547,7 +547,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                className="hidden" 
              />
 
-             <div className="flex justify-between items-center mt-6 pt-4 border-t border-stone-100">
+             <div className="flex justify-between items-center mt-5 pt-4 border-t border-stone-100 flex-shrink-0">
                <div className="text-[10px] text-stone-400 flex items-center gap-1.5">
                  {isSavingNote ? (
                    <>
