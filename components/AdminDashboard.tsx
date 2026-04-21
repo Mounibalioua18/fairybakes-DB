@@ -982,7 +982,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
           {/* Spreadsheet Body */}
           {activeTab !== 'portfolio' ? (
-            <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-sm border border-stone-100 overflow-hidden">
+            <div className="w-full flex-1 flex flex-col mb-10">
               {activeTab === 'schedule' ? (
               <>
                 <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-2 bg-stone-50 border-b border-stone-100 text-[10px] uppercase tracking-widest font-bold text-stone-400">
@@ -994,7 +994,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   <div className="col-span-2 text-right">Actions</div>
                 </div>
 
-                <div className="max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-hide">
+                <div className="flex flex-col">
                   {groupedOrders.length === 0 ? (
                     <div className="p-10 md:p-20 text-center text-stone-400 italic font-serif text-base md:text-lg flex flex-col items-center gap-4">
                       <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center text-stone-200">
@@ -1093,7 +1093,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   <div className="col-span-1 text-right">Actions</div>
                 </div>
 
-                <div className="max-h-[calc(100vh-220px)] md:max-h-[calc(100vh-280px)] overflow-y-auto scrollbar-hide">
+                <div className="flex flex-col">
                   {filteredTaobSignUps.length === 0 ? (
                     <div className="p-10 md:p-20 text-center text-stone-400 italic font-serif text-base md:text-lg flex flex-col items-center gap-4">
                       <div className="w-12 h-12 bg-stone-50 rounded-full flex items-center justify-center text-stone-200">
