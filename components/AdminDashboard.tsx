@@ -713,100 +713,121 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       {/* Modal Detail View for TAOB */}
       {selectedTaob && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-md transition-all duration-300 animate-in fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
           onClick={() => setSelectedTaob(null)}
         >
           <div 
-            className="bg-white w-full max-w-2xl rounded-[2.5rem] md:rounded-[3rem] shadow-2xl overflow-hidden relative"
+            className="bg-white/95 backdrop-blur-2xl w-full max-w-4xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden relative border border-stone-200/50 flex flex-col transform transition-all animate-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-stone-100/80 to-transparent pointer-events-none" />
             <button 
               onClick={() => setSelectedTaob(null)}
-              className="absolute top-4 right-4 md:top-6 md:right-6 p-2 rounded-full bg-stone-50 text-stone-400 hover:text-stone-900 transition-colors z-10"
+              className="absolute top-5 right-5 md:top-6 md:right-6 p-2.5 rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-stone-200/50 text-stone-500 hover:text-stone-900 transition-all z-10 hover:scale-105"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
-            <div className="p-6 md:p-14 max-h-[90vh] overflow-y-auto scrollbar-hide">
+            <div className="p-6 md:p-10 max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-thumb]:rounded-full relative z-0">
               {/* PROFILE HEADER */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className="w-14 h-14 md:w-20 md:h-20 bg-rose-50 rounded-2xl md:rounded-[2rem] flex items-center justify-center text-rose-400 border border-rose-100 flex-shrink-0">
-                  <User size={selectedTaob.customerName ? 28 : 36} />
+              <div className="flex flex-col md:flex-row md:items-center gap-5 mb-10 pb-8 border-b border-stone-100/80">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-stone-100 to-stone-50 rounded-[1.25rem] md:rounded-[1.5rem] flex items-center justify-center text-stone-800 shadow-inner border border-stone-200/60 flex-shrink-0">
+                  <User size={selectedTaob.customerName ? 28 : 32} className="opacity-80" />
                 </div>
-                <div className="min-w-0 flex-1 relative flex flex-col justify-center">
-                  <h2 className="text-xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight mb-1">
+                <div className="min-w-0 flex-1 relative flex flex-col justify-center gap-1.5">
+                  <h2 className="text-2xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight tracking-tight">
                     {selectedTaob.customerName || 'No Name'}
                   </h2>
                   <a 
                     href={`https://instagram.com/${selectedTaob.instagramHandle}`} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-rose-400 flex items-center gap-1.5 font-bold text-xs md:text-base hover:text-rose-600 transition-colors truncate mt-1 w-fit"
+                    className="text-stone-500 flex items-center gap-1.5 font-semibold text-sm hover:text-stone-900 transition-colors truncate w-fit"
                   >
-                    <Instagram size={14} className="flex-shrink-0" /> @{selectedTaob.instagramHandle}
+                    <Instagram size={14} className="text-stone-400" /> @{selectedTaob.instagramHandle}
                   </a>
                 </div>
               </div>
 
-              {/* DETAILS GRID */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-10">
-                <DetailBox label="Phone Number" value={selectedTaob.phoneNumber || 'N/A'} />
-                <DetailBox label="Sign-up Date" value={new Date(selectedTaob.timestamp || selectedTaob.created_at || Date.now()).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })} />
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8">
+                {/* DETAILS GRID - Bento Box Style */}
+                <div className="lg:col-span-5 flex flex-col gap-4 md:gap-5">
+                  <h3 className="text-[10px] uppercase tracking-widest text-stone-400 font-bold mb-1 ml-1 hidden md:block">Registration Details</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                    <div className="bg-stone-50/80 border border-stone-100 rounded-2xl p-5 flex flex-col justify-center transition-all hover:bg-stone-50 shadow-sm relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-stone-200/50" />
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-1.5">Phone Number</span>
+                      <span className="text-sm font-semibold text-stone-800">{selectedTaob.phoneNumber || 'N/A'}</span>
+                    </div>
+                    <div className="bg-stone-50/80 border border-stone-100 rounded-2xl p-5 flex flex-col justify-center transition-all hover:bg-stone-50 shadow-sm relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-1 h-full bg-stone-200/50" />
+                      <span className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mb-1.5">Sign-up Date</span>
+                      <span className="text-sm font-semibold text-stone-800">{new Date(selectedTaob.timestamp || selectedTaob.created_at || Date.now()).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* PAYMENT PROOF */}
+                <div className="lg:col-span-7 flex flex-col">
+                  <div className="flex items-center justify-between mb-4 px-1">
+                    <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold hidden md:block">Proof of Payment</span>
+                    {selectedTaob.paymentProofUrl && (
+                      <a 
+                        href={selectedTaob.paymentProofUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-stone-400 hover:text-stone-900 transition-colors flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold ml-auto"
+                      >
+                        <ExternalLink size={12} /> Open Full
+                      </a>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 bg-stone-100/50 rounded-[1.5rem] md:rounded-[2rem] border border-stone-200/50 p-2 md:p-3 shadow-inner flex flex-col justify-center h-full min-h-[300px]">
+                    {selectedTaob.paymentProofUrl ? (
+                      <div className="relative w-full h-full min-h-[250px] rounded-2xl overflow-hidden bg-white/40 group flex flex-col justify-center">
+                        <img 
+                          src={selectedTaob.paymentProofUrl} 
+                          className="w-full h-full object-contain max-h-[500px]" 
+                          alt="Payment Proof"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/600x800/f5f5f4/a8a29e?text=Image+Not+Found';
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-16 text-stone-300 gap-3 italic text-sm font-serif">
+                        <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center mb-2 shadow-inner">
+                          <ImageIcon size={24} className="text-stone-300" />
+                        </div>
+                        <span>No payment proof attached.</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              {/* PAYMENT PROOF */}
-              <div className="mb-8 md:mb-10 p-5 md:p-8 bg-stone-50 rounded-2xl md:rounded-[2rem] border border-stone-100">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Proof of Payment</span>
-                  {selectedTaob.paymentProofUrl && (
-                    <a 
-                      href={selectedTaob.paymentProofUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-stone-400 hover:text-rose-400 transition-colors flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold"
-                    >
-                      <ExternalLink size={12} /> Open Full
-                    </a>
-                  )}
-                </div>
-                
-                {selectedTaob.paymentProofUrl ? (
-                  <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner border border-stone-200 bg-white group">
-                    <img 
-                      src={selectedTaob.paymentProofUrl} 
-                      className="w-full h-full object-contain" 
-                      alt="Payment Proof"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/fff/rose?text=Image+Not+Found';
-                      }}
+              <div className="mt-8 pt-6 border-t border-stone-100 flex flex-col md:flex-row items-center justify-between gap-5">
+                <div className="flex flex-col gap-1.5 w-full md:w-auto bg-stone-50/50 p-2 pl-4 pr-2 rounded-2xl border border-stone-100">
+                  <div className="flex items-center gap-4">
+                    <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Registration Status</span>
+                    <StatusDropdown 
+                      type="taob"
+                      status={selectedTaob.status} 
+                      onChange={(s) => updateTaobStatus(selectedTaob.id, s)} 
+                      className="w-full md:w-48 bg-white"
                     />
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-10 text-stone-300 gap-2 italic text-sm">
-                    <ImageIcon size={32} />
-                    <span>No payment proof attached.</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                <div className="flex flex-col gap-1 w-full md:w-auto">
-                  <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Registration Status</span>
-                  <StatusDropdown 
-                    type="taob"
-                    status={selectedTaob.status} 
-                    onChange={(s) => updateTaobStatus(selectedTaob.id, s)} 
-                    className="w-full md:w-48"
-                  />
                 </div>
+                
                 <button 
                   onClick={() => {
                     deleteTaobSignUp(selectedTaob.id);
                     setSelectedTaob(null);
                   }}
-                  className="flex items-center gap-2 text-stone-300 hover:text-red-400 transition-colors text-[10px] font-bold uppercase tracking-widest md:pt-4"
+                  className="flex items-center justify-center gap-2 px-5 py-2.5 text-[10px] uppercase font-bold tracking-widest text-red-500 hover:text-white border border-red-100 bg-red-50 hover:bg-red-500 hover:border-red-500 rounded-xl transition-all w-full md:w-auto"
                 >
-                  <Trash2 size={16} /> Delete Entry
+                  <Trash2 size={14} /> Delete Entry
                 </button>
               </div>
             </div>
