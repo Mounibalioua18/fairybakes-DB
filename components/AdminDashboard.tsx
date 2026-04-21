@@ -493,7 +493,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                  value={noteContent.text}
                  onChange={(e) => setNoteContent({ ...noteContent, text: e.target.value })}
                  placeholder="Type your private studio note here..."
-                 className="w-full min-h-[300px] bg-stone-50/50 border border-stone-100 rounded-2xl p-5 text-stone-700 text-base leading-relaxed focus:outline-none focus:ring-2 focus:ring-stone-200 resize-none font-serif placeholder:text-stone-300 transition-all shadow-inner"
+                 className="w-full min-h-[300px] md:min-h-[200px] bg-white border border-stone-900 rounded-2xl p-5 text-stone-700 text-base leading-relaxed focus:outline-none focus:ring-2 focus:ring-stone-900 resize-none font-serif placeholder:text-stone-300 transition-all"
                />
 
                {/* Note Photos Grid */}
