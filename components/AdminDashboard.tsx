@@ -23,7 +23,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
-  const [galleryImages, setGalleryImages] = useState<Record<string, string>>({}); 
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState('');
@@ -160,6 +159,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         designNotes: o.designNotes || o.design_notes || '',
         note: o.note || '',
         inspirationId: o.inspirationId || o.inspiration_id || '',
+        inspirationImageUrl: o.inspiration_image_url || o.inspirationImageUrl || '',
         status: o.status || 'pending',
         timestamp: o.timestamp || Date.now()
       })) as CakeOrder[];
@@ -191,34 +191,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
         // Ignore if 'taob' table doesn't exist yet
       }
 
-      const { data: galleryData, error: galleryError } = await supabase
-        .from('galleries')
-        .select('*')
-        .limit(100);
-        
-      if (galleryError) throw galleryError;
-      
-      const imageMap: Record<string, string> = {};
-      galleryData?.forEach((doc: any) => {
-        const linkedOrderId = (doc.order_id || doc.propertyId || doc.property_id || doc.id)?.trim();
-        let fileUrls = doc.images || doc.image_url || doc.imageUrl;
-
-        if (typeof fileUrls === 'string') {
-          try {
-            const parsed = JSON.parse(fileUrls);
-            if (Array.isArray(parsed)) fileUrls = parsed;
-          } catch(e) {}
-        }
-
-        if (linkedOrderId && fileUrls) {
-          if (Array.isArray(fileUrls) && fileUrls.length > 0) {
-            imageMap[linkedOrderId] = String(fileUrls[0]).trim();
-          } else if (typeof fileUrls === 'string' && fileUrls.startsWith('http')) {
-            imageMap[linkedOrderId] = fileUrls.trim();
-          }
-        }
-      });
-      setGalleryImages(imageMap);
     } catch (error: any) {
       console.error('Fetch error:', error);
       alert(`Error reading from Supabase: ${error.message || 'Check database permissions'}`);
@@ -641,9 +613,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <div className="mb-8 md:mb-10 p-5 md:p-8 bg-stone-50 rounded-2xl md:rounded-[2rem] border border-stone-100">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Design Inspiration</span>
-                  {(galleryImages[selectedOrder.id] || (selectedOrder.inspirationId && galleryImages[selectedOrder.inspirationId])) && (
+                  {selectedOrder.inspirationImageUrl && (
                     <a 
-                      href={galleryImages[selectedOrder.id] || (selectedOrder.inspirationId ? galleryImages[selectedOrder.inspirationId] : undefined)}
+                      href={selectedOrder.inspirationImageUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-stone-400 hover:text-rose-400 transition-colors flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold"
@@ -653,10 +625,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   )}
                 </div>
                 
-                {(galleryImages[selectedOrder.id] || (selectedOrder.inspirationId && galleryImages[selectedOrder.inspirationId])) ? (
+                {selectedOrder.inspirationImageUrl ? (
                   <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-inner border border-stone-200 bg-white group">
                     <img 
-                      src={galleryImages[selectedOrder.id] || (selectedOrder.inspirationId ? galleryImages[selectedOrder.inspirationId] : undefined)} 
+                      src={selectedOrder.inspirationImageUrl} 
                       className="w-full h-full object-contain" 
                       alt="Design Reference"
                       onError={(e) => {
@@ -1038,7 +1010,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                 <div className="md:hidden flex items-start gap-2 mt-0.5 overflow-hidden">
                                    <span className="text-xs font-serif font-bold text-stone-900 line-clamp-2 max-w-[140px] leading-tight">{order.customerName}</span>
                                    <div className="flex items-center gap-1.5 mt-0.5">
-                                     {(galleryImages[order.id] || (order.inspirationId && galleryImages[order.inspirationId])) && <ImageIcon size={10} className="text-rose-400 flex-shrink-0" />}
+                                     {order.inspirationImageUrl && <ImageIcon size={10} className="text-rose-400 flex-shrink-0" />}
                                      {hasNoteContent && <StickyNote size={10} className="text-amber-500 flex-shrink-0" />}
                                    </div>
                                  </div>
@@ -1068,7 +1040,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                     @{order.instagramHandle}
                                   </a>
                                 </div>
-                                {(galleryImages[order.id] || (order.inspirationId && galleryImages[order.inspirationId])) && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
+                                {order.inspirationImageUrl && <ImageIcon size={12} className="text-rose-400 flex-shrink-0" />}
                               </div>
 
                               <div className="hidden md:block col-span-1 text-[11px] text-stone-500">{order.cakeSize}</div>

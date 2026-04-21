@@ -11,6 +11,7 @@ export interface CakeOrder {
   designNotes: string;
   note?: string; // New studio note field
   inspirationId?: string;
+  inspirationImageUrl?: string;
   status: 'pending' | 'confirmed' | 'paid' | 'delivered' | 'cancelled';
   timestamp: number;
 }

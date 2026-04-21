@@ -94,27 +94,14 @@ export const OrderForm: React.FC = () => {
             instagram_handle: formData.instagramHandle,
             event_date: formData.eventDate,
             cake_size: formData.cakeSize,
-            flavor: formData.flavor
+            flavor: formData.flavor,
+            inspiration_image_url: finalFileUrl
           }
         ])
         .select()
         .single();
 
       if (orderError) throw orderError;
-
-      // 3. Create entry in 'galleries' table if image exists
-      if (finalFileUrl && orderData) {
-        const { error: galleryError } = await supabase
-          .from('galleries')
-          .insert([
-            {
-              order_id: orderData.id,
-              images: [finalFileUrl]
-            }
-          ]);
-          
-        if (galleryError) throw galleryError;
-      }
 
       setStatus(FormStatus.SUCCESS);
       setPreviewUrl(null);
