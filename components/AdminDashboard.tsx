@@ -491,19 +491,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
              <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-900 [&::-webkit-scrollbar-thumb]:rounded-full py-2 flex flex-col gap-6 -mr-3 pr-3 md:-mr-4 md:pr-4">
                <textarea
                  value={noteContent.text}
-                 onChange={(e) => {
-                   setNoteContent({ ...noteContent, text: e.target.value });
-                   e.target.style.height = 'auto';
-                   e.target.style.height = `${e.target.scrollHeight}px`;
-                 }}
-                 ref={(el) => {
-                   if (el) {
-                     el.style.height = 'auto';
-                     el.style.height = `${el.scrollHeight}px`;
-                   }
-                 }}
+                 onChange={(e) => setNoteContent({ ...noteContent, text: e.target.value })}
                  placeholder="Type your private studio note here..."
-                 className="w-full min-h-[300px] md:min-h-[200px] bg-white border border-stone-900 rounded-2xl p-5 text-stone-700 text-base leading-relaxed focus:outline-none resize-none font-serif placeholder:text-stone-300 transition-colors overflow-hidden"
+                 className="w-full h-[300px] md:h-[200px] bg-white border border-stone-900 rounded-2xl py-5 pl-5 pr-8 text-stone-700 text-base leading-relaxed focus:outline-none resize-none font-serif placeholder:text-stone-300 transition-colors overflow-y-auto [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-track]:my-3 [&::-webkit-scrollbar-thumb]:bg-stone-900 [&::-webkit-scrollbar-thumb]:border-[3px] [&::-webkit-scrollbar-thumb]:border-solid [&::-webkit-scrollbar-thumb]:border-white [&::-webkit-scrollbar-thumb]:rounded-full"
                />
 
                {/* Note Photos Grid */}
