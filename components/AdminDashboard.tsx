@@ -475,8 +475,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           >
              <div className="flex items-center justify-between mb-6 pb-4 border-b border-stone-100">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center border border-amber-100">
-                    <StickyNote size={14} className="text-amber-500" />
+                  <div className="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center border border-stone-200">
+                    <StickyNote size={14} className="text-stone-800" />
                   </div>
                   <h3 className="text-lg font-serif font-bold text-stone-800">Studio Note</h3>
                 </div>
@@ -490,11 +490,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
 
              <div className="flex-1 overflow-y-auto scrollbar-hide py-2 flex flex-col gap-6">
                <textarea
-                 autoFocus
                  value={noteContent.text}
                  onChange={(e) => setNoteContent({ ...noteContent, text: e.target.value })}
                  placeholder="Type your private studio note here..."
-                 className="w-full min-h-[160px] bg-stone-50/50 border border-stone-100 rounded-2xl p-5 text-stone-700 text-base leading-relaxed focus:outline-none focus:ring-2 focus:ring-amber-200/50 resize-none font-serif placeholder:text-stone-300 transition-all shadow-inner"
+                 className="w-full min-h-[300px] bg-stone-50/50 border border-stone-100 rounded-2xl p-5 text-stone-700 text-base leading-relaxed focus:outline-none focus:ring-2 focus:ring-stone-200 resize-none font-serif placeholder:text-stone-300 transition-all shadow-inner"
                />
 
                {/* Note Photos Grid */}
@@ -522,14 +521,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                      ))}
                      
                      {isUploadingImage ? (
-                       <div className="aspect-square rounded-2xl border-2 border-dashed border-amber-200 flex flex-col items-center justify-center bg-amber-50/30 gap-2">
-                         <Loader2 size={18} className="text-amber-500 animate-spin" />
-                         <span className="text-[10px] uppercase font-bold text-amber-500/70">Uploading</span>
+                       <div className="aspect-square rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center bg-stone-50 gap-2">
+                         <Loader2 size={18} className="text-stone-400 animate-spin" />
+                         <span className="text-[10px] uppercase font-bold text-stone-400">Uploading</span>
                        </div>
                      ) : noteContent.images.length < 4 ? (
                        <button 
                          onClick={() => fileInputRef.current?.click()}
-                         className="aspect-square rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center gap-1.5 text-stone-400 hover:text-amber-500 hover:border-amber-200 hover:bg-amber-50/30 transition-all group"
+                         className="aspect-square rounded-2xl border-2 border-dashed border-stone-200 flex flex-col items-center justify-center gap-1.5 text-stone-400 hover:text-stone-800 hover:border-stone-300 hover:bg-stone-50 transition-all group"
                        >
                          <ImagePlus size={20} className="group-hover:scale-110 transition-transform" />
                          <span className="text-[9px] uppercase font-bold tracking-wider">Add Photo</span>
@@ -552,8 +551,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                <div className="text-[10px] text-stone-400 flex items-center gap-1.5">
                  {isSavingNote ? (
                    <>
-                     <Loader2 size={12} className="animate-spin text-amber-500" />
-                     <span className="uppercase font-bold text-amber-600">Syncing...</span>
+                     <Loader2 size={12} className="animate-spin text-stone-500" />
+                     <span className="uppercase font-bold text-stone-600">Syncing...</span>
                    </>
                  ) : (
                    <span className="italic">Auto-saves on close</span>
