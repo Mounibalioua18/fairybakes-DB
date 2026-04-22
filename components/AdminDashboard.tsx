@@ -506,10 +506,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                          <img src={url} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Note attachment" />
                          <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors pointer-events-none" />
                          <button 
-                           onClick={() => removeNoteImage(idx)}
-                           className="absolute top-2 right-2 bg-white/90 text-red-500 rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                           onClick={(e) => {
+                             e.preventDefault();
+                             e.stopPropagation();
+                             if (window.confirm('Are you sure you want to delete this reference image?')) {
+                               removeNoteImage(idx);
+                             }
+                           }}
+                           className="absolute top-2 right-2 z-10 bg-white/90 text-red-500 rounded-full p-2 shadow-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
                          >
-                           <X size={12} />
+                           <X size={14} />
                          </button>
                          <a 
                            href={url} 
