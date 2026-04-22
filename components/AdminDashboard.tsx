@@ -573,7 +573,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       {/* Modal Detail View */}
       {selectedOrder && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-5 sm:p-8 md:p-12 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
           onClick={() => setSelectedOrder(null)}
         >
           <div 
@@ -583,38 +583,61 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-stone-100/80 to-transparent pointer-events-none" />
             <button 
               onClick={() => setSelectedOrder(null)}
-              className="absolute top-5 right-5 md:top-6 md:right-6 p-2.5 rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-stone-200/50 text-stone-500 hover:text-stone-900 transition-all z-10 hover:scale-105"
+              className="absolute top-4 right-4 md:top-6 md:right-6 p-2.5 rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-stone-200/50 text-stone-500 hover:text-stone-900 transition-all z-10 hover:scale-105"
             >
               <X size={18} />
             </button>
 
-            <div className="p-6 md:p-10 max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-thumb]:rounded-full relative z-0">
+            <div className="p-6 md:p-10 max-h-[85vh] md:max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-thumb]:rounded-full relative z-0">
               {/* PROFILE HEADER */}
-              <div className="flex flex-col md:flex-row md:items-center gap-5 mb-10 pb-8 border-b border-stone-100/80">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-stone-100 to-stone-50 rounded-[1.25rem] md:rounded-[1.5rem] flex items-center justify-center text-stone-800 shadow-inner border border-stone-200/60 flex-shrink-0">
-                  <User size={selectedOrder.customerName ? 28 : 32} className="opacity-80" />
-                </div>
-                <div className="min-w-0 flex-1 relative flex flex-col justify-center gap-1.5">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <h2 className="text-2xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight tracking-tight">
-                      {selectedOrder.customerName}
-                    </h2>
-                    <button 
-                      onClick={(e) => openNoteEditor(e, selectedOrder)}
-                      className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all shadow-sm ${selectedOrder.note ? 'bg-stone-900 text-white border border-stone-900 hover:bg-stone-800' : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50 hover:text-stone-900'}`}
-                    >
-                      {selectedOrder.note ? <StickyNote size={12} className="text-amber-400" /> : <Edit3 size={12} />}
-                      {selectedOrder.note ? 'View Note' : 'Add Note'}
-                    </button>
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8 md:mb-10 pb-8 border-b border-stone-100/80 pt-8 md:pt-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-stone-100 to-stone-50 rounded-[1.25rem] md:rounded-[1.5rem] flex items-center justify-center text-stone-800 shadow-inner border border-stone-200/60 flex-shrink-0">
+                    <User size={selectedOrder.customerName ? 28 : 32} className="opacity-80" />
                   </div>
-                  <a 
-                    href={`https://instagram.com/${selectedOrder.instagramHandle}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-stone-500 flex items-center gap-1.5 font-semibold text-sm hover:text-stone-900 transition-colors truncate w-fit"
+                  <div className="min-w-0 flex-1 relative flex flex-col justify-center gap-1.5">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h2 className="text-2xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight tracking-tight">
+                        {selectedOrder.customerName}
+                      </h2>
+                      <button 
+                        onClick={(e) => openNoteEditor(e, selectedOrder)}
+                        className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold transition-all shadow-sm ${selectedOrder.note ? 'bg-stone-900 text-white border border-stone-900 hover:bg-stone-800' : 'bg-white text-stone-500 border border-stone-200 hover:bg-stone-50 hover:text-stone-900'}`}
+                      >
+                        {selectedOrder.note ? <StickyNote size={12} className="text-amber-400" /> : <Edit3 size={12} />}
+                        {selectedOrder.note ? 'View Note' : 'Add Note'}
+                      </button>
+                    </div>
+                    <a 
+                      href={`https://instagram.com/${selectedOrder.instagramHandle}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-stone-500 flex items-center gap-1.5 font-semibold text-sm hover:text-stone-900 transition-colors truncate w-fit"
+                    >
+                      <Instagram size={14} className="text-stone-400" /> @{selectedOrder.instagramHandle}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 md:gap-3 w-full md:w-auto bg-stone-50/50 md:bg-transparent p-3 md:p-0 rounded-2xl md:rounded-none border border-stone-100 md:border-none md:mr-16">
+                  <div className="flex flex-col gap-1 w-full md:w-auto">
+                    <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold hidden md:block text-right">Status</span>
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                      <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold md:hidden shrink-0">Status</span>
+                      <StatusDropdown 
+                        status={selectedOrder.status} 
+                        onChange={(s) => updateStatus(selectedOrder.id, s)} 
+                        className="w-full md:w-40 bg-white shadow-sm md:shadow-none"
+                      />
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => deleteOrder(selectedOrder.id)} 
+                    className="flex items-center justify-center gap-1.5 px-4 py-2.5 text-[10px] uppercase font-bold tracking-widest text-red-500 hover:text-white border border-stone-200 md:border-red-100 bg-white md:bg-red-50 hover:bg-red-500 hover:border-red-500 rounded-xl transition-all w-auto md:w-full shadow-sm md:shadow-none"
                   >
-                    <Instagram size={14} className="text-stone-400" /> @{selectedOrder.instagramHandle}
-                  </a>
+                    <Trash2 size={14} /> <span className="hidden md:inline">Delete Order</span><span className="md:hidden">Delete</span>
+                  </button>
                 </div>
               </div>
 
@@ -685,26 +708,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   </div>
                 </div>
               </div>
-
-              <div className="mt-8 pt-6 border-t border-stone-100 flex flex-col md:flex-row items-center justify-between gap-5">
-                <div className="flex flex-col gap-1.5 w-full md:w-auto bg-stone-50/50 p-2 pl-4 pr-2 rounded-2xl border border-stone-100">
-                  <div className="flex items-center gap-4">
-                    <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Status</span>
-                    <StatusDropdown 
-                      status={selectedOrder.status} 
-                      onChange={(s) => updateStatus(selectedOrder.id, s)} 
-                      className="w-full md:w-48 bg-white"
-                    />
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => deleteOrder(selectedOrder.id)} 
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 text-[10px] uppercase font-bold tracking-widest text-red-500 hover:text-white border border-red-100 bg-red-50 hover:bg-red-500 hover:border-red-500 rounded-xl transition-all w-full md:w-auto"
-                >
-                  <Trash2 size={14} /> Delete Order
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -713,7 +716,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       {/* Modal Detail View for TAOB */}
       {selectedTaob && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-5 sm:p-8 md:p-12 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
           onClick={() => setSelectedTaob(null)}
         >
           <div 
@@ -723,29 +726,56 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-stone-100/80 to-transparent pointer-events-none" />
             <button 
               onClick={() => setSelectedTaob(null)}
-              className="absolute top-5 right-5 md:top-6 md:right-6 p-2.5 rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-stone-200/50 text-stone-500 hover:text-stone-900 transition-all z-10 hover:scale-105"
+              className="absolute top-4 right-4 md:top-6 md:right-6 p-2.5 rounded-full bg-white/80 backdrop-blur-md shadow-sm border border-stone-200/50 text-stone-500 hover:text-stone-900 transition-all z-10 hover:scale-105"
             >
               <X size={18} />
             </button>
 
-            <div className="p-6 md:p-10 max-h-[90vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-thumb]:rounded-full relative z-0">
+            <div className="p-6 md:p-10 max-h-[85vh] md:max-h-[80vh] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-stone-300 [&::-webkit-scrollbar-thumb]:rounded-full relative z-0">
               {/* PROFILE HEADER */}
-              <div className="flex flex-col md:flex-row md:items-center gap-5 mb-10 pb-8 border-b border-stone-100/80">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-stone-100 to-stone-50 rounded-[1.25rem] md:rounded-[1.5rem] flex items-center justify-center text-stone-800 shadow-inner border border-stone-200/60 flex-shrink-0">
-                  <User size={selectedTaob.customerName ? 28 : 32} className="opacity-80" />
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-8 md:mb-10 pb-8 border-b border-stone-100/80 pt-8 md:pt-0">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-stone-100 to-stone-50 rounded-[1.25rem] md:rounded-[1.5rem] flex items-center justify-center text-stone-800 shadow-inner border border-stone-200/60 flex-shrink-0">
+                    <User size={selectedTaob.customerName ? 28 : 32} className="opacity-80" />
+                  </div>
+                  <div className="min-w-0 flex-1 relative flex flex-col justify-center gap-1.5">
+                    <h2 className="text-2xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight tracking-tight">
+                      {selectedTaob.customerName || 'No Name'}
+                    </h2>
+                    <a 
+                      href={`https://instagram.com/${selectedTaob.instagramHandle}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-stone-500 flex items-center gap-1.5 font-semibold text-sm hover:text-stone-900 transition-colors truncate w-fit"
+                    >
+                      <Instagram size={14} className="text-stone-400" /> @{selectedTaob.instagramHandle}
+                    </a>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1 relative flex flex-col justify-center gap-1.5">
-                  <h2 className="text-2xl md:text-3xl font-serif text-stone-900 font-bold break-words leading-tight tracking-tight">
-                    {selectedTaob.customerName || 'No Name'}
-                  </h2>
-                  <a 
-                    href={`https://instagram.com/${selectedTaob.instagramHandle}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-stone-500 flex items-center gap-1.5 font-semibold text-sm hover:text-stone-900 transition-colors truncate w-fit"
+
+                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 md:gap-3 w-full md:w-auto bg-stone-50/50 md:bg-transparent p-3 md:p-0 rounded-2xl md:rounded-none border border-stone-100 md:border-none md:mr-16">
+                  <div className="flex flex-col gap-1 w-full md:w-auto">
+                    <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold hidden md:block text-right">Settings</span>
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                      <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold md:hidden shrink-0">Status</span>
+                      <StatusDropdown 
+                        type="taob"
+                        status={selectedTaob.status} 
+                        onChange={(s) => updateTaobStatus(selectedTaob.id, s)} 
+                        className="w-full md:w-40 bg-white shadow-sm md:shadow-none"
+                      />
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => {
+                      deleteTaobSignUp(selectedTaob.id);
+                      setSelectedTaob(null);
+                    }}
+                    className="flex items-center justify-center gap-1.5 px-4 py-2.5 text-[10px] uppercase font-bold tracking-widest text-red-500 hover:text-white border border-stone-200 md:border-red-100 bg-white md:bg-red-50 hover:bg-red-500 hover:border-red-500 rounded-xl transition-all w-auto md:w-full shadow-sm md:shadow-none"
                   >
-                    <Instagram size={14} className="text-stone-400" /> @{selectedTaob.instagramHandle}
-                  </a>
+                    <Trash2 size={14} /> <span className="hidden md:inline">Delete Entry</span><span className="md:hidden">Delete</span>
+                  </button>
                 </div>
               </div>
 
@@ -805,30 +835,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                     )}
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-stone-100 flex flex-col md:flex-row items-center justify-between gap-5">
-                <div className="flex flex-col gap-1.5 w-full md:w-auto bg-stone-50/50 p-2 pl-4 pr-2 rounded-2xl border border-stone-100">
-                  <div className="flex items-center gap-4">
-                    <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">Registration Status</span>
-                    <StatusDropdown 
-                      type="taob"
-                      status={selectedTaob.status} 
-                      onChange={(s) => updateTaobStatus(selectedTaob.id, s)} 
-                      className="w-full md:w-48 bg-white"
-                    />
-                  </div>
-                </div>
-                
-                <button 
-                  onClick={() => {
-                    deleteTaobSignUp(selectedTaob.id);
-                    setSelectedTaob(null);
-                  }}
-                  className="flex items-center justify-center gap-2 px-5 py-2.5 text-[10px] uppercase font-bold tracking-widest text-red-500 hover:text-white border border-red-100 bg-red-50 hover:bg-red-500 hover:border-red-500 rounded-xl transition-all w-full md:w-auto"
-                >
-                  <Trash2 size={14} /> Delete Entry
-                </button>
               </div>
             </div>
           </div>
