@@ -166,8 +166,8 @@ export const AnalyticsSection: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-[280px] w-full focus:outline-none">
-          <ResponsiveContainer width="100%" height="100%" className="focus:outline-none">
+        <div className="h-[280px] w-full focus:outline-none [&_*]:outline-none">
+          <ResponsiveContainer width="100%" height="100%" className="focus:outline-none [&_*]:outline-none">
             <AreaChart 
               data={data?.chartData || []} 
               style={{ outline: 'none' }}
