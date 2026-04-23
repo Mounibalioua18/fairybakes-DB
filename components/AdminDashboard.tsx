@@ -4,6 +4,7 @@ import { CakeOrder } from '../types';
 import { Trash2, User, Search, RefreshCw, Package, X, Calendar, LogOut, ChevronDown, Instagram, Maximize2, Filter, Check, Image as ImageIcon, ExternalLink, Mail, Lock, StickyNote, Save, Edit3, Plus, ImagePlus, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { PortfolioManager } from './PortfolioManager';
+import { AnalyticsSection } from './AnalyticsSection';
 
 interface AdminDashboardProps {
   onClose: () => void;
@@ -18,7 +19,7 @@ interface NoteData {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [orders, setOrders] = useState<CakeOrder[]>([]);
-  const [activeTab, setActiveTab] = useState<'schedule' | 'taob' | 'portfolio'>('schedule');
+  const [activeTab, setActiveTab] = useState<'schedule' | 'taob' | 'portfolio' | 'status'>('schedule');
   const [taobSignUps, setTaobSignUps] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -503,7 +504,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                      {noteContent.images.map((url, idx) => (
                        <div key={idx} className="relative group aspect-square rounded-2xl overflow-hidden bg-stone-100 shadow-sm border border-stone-200/50">
-                         <img src={url} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" alt="Note attachment" />
+                         <img 
+                           src={url} 
+                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer" 
+                           alt="Note attachment" 
+                           onClick={() => window.open(url, '_blank')} 
+                         />
                          <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors pointer-events-none" />
                          <button 
                            onClick={(e) => {
@@ -513,16 +519,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                                removeNoteImage(idx);
                              }
                            }}
-                           className="absolute top-2 right-2 z-10 bg-white/90 text-red-500 rounded-full p-2 shadow-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
+                           className="absolute top-2 right-2 z-20 bg-white/90 text-red-500 rounded-full p-2 shadow-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white"
                          >
                            <X size={14} />
                          </button>
-                         <a 
-                           href={url} 
-                           target="_blank" 
-                           rel="noopener noreferrer"
-                           className="absolute inset-0 z-0"
-                         />
                        </div>
                      ))}
                      
@@ -579,11 +579,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       {/* Modal Detail View */}
       {selectedOrder && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-5 sm:p-8 md:p-12 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 md:p-12 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
           onClick={() => setSelectedOrder(null)}
         >
           <div 
-            className="bg-white/95 backdrop-blur-2xl w-full max-w-4xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden relative border border-stone-200/50 flex flex-col transform transition-all animate-in zoom-in-95"
+            className="bg-white/95 backdrop-blur-2xl w-[94%] max-w-4xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden relative border border-stone-200/50 flex flex-col transform transition-all animate-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-stone-100/80 to-transparent pointer-events-none" />
@@ -739,11 +739,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
       {/* Modal Detail View for TAOB */}
       {selectedTaob && (
         <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center p-5 sm:p-8 md:p-12 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 md:p-12 bg-stone-900/60 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
           onClick={() => setSelectedTaob(null)}
         >
           <div 
-            className="bg-white/95 backdrop-blur-2xl w-full max-w-4xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden relative border border-stone-200/50 flex flex-col transform transition-all animate-in zoom-in-95"
+            className="bg-white/95 backdrop-blur-2xl w-[94%] max-w-4xl rounded-[2rem] md:rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] overflow-hidden relative border border-stone-200/50 flex flex-col transform transition-all animate-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-stone-100/80 to-transparent pointer-events-none" />
@@ -1000,6 +1000,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 >
                   Portfolio
                 </button>
+                <button 
+                  onClick={() => setActiveTab('status')}
+                  className={`flex-1 md:flex-none px-3 md:px-4 py-1.5 flex items-center justify-center text-[10px] md:text-[11px] font-bold rounded-full transition-all whitespace-nowrap ${activeTab === 'status' ? 'bg-white text-stone-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
+                >
+                  Status
+                </button>
               </div>
             </div>
             
@@ -1081,7 +1087,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
           </div>
 
           {/* Spreadsheet Body */}
-          {activeTab !== 'portfolio' ? (
+          {activeTab === 'schedule' || activeTab === 'taob' ? (
             <div className="w-full flex-1 flex flex-col mb-10">
               {activeTab === 'schedule' ? (
               <>
@@ -1267,9 +1273,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               </>
             ) : null}
             </div>
-          ) : (
+          ) : activeTab === 'portfolio' ? (
             <div className="-mx-4 md:-mx-8">
               <PortfolioManager />
+            </div>
+          ) : (
+            <div className="w-full">
+              <AnalyticsSection />
             </div>
           )}
         </div>
@@ -1291,7 +1301,7 @@ const StatusDropdown = ({ status, type = 'order', onChange, className = "" }: { 
     confirmed: 'bg-emerald-500 text-white border-emerald-700 shadow-sm',
     paid: 'bg-rose-500 text-white border-rose-700 shadow-sm',
     delivered: 'bg-stone-600 text-white border-stone-800 shadow-sm',
-    none: 'bg-white text-stone-400 border-stone-200'
+    none: 'bg-stone-50 text-stone-400 border-stone-200'
   };
 
   const currentTheme = themes[status] || themes.none;

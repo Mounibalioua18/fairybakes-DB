@@ -1,8 +1,31 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
+import { supabase } from './lib/supabase';
 
 const App: React.FC = () => {
+  useEffect(() => {
+    const trackSession = async () => {
+      const sessionId = localStorage.getItem('fairy_session_id') || crypto.randomUUID();
+      localStorage.setItem('fairy_session_id', sessionId);
+      
+      try {
+        await supabase
+          .from('site_analytics')
+          .upsert({ 
+            session_id: sessionId,
+            last_ping: new Date().toISOString()
+          }, { onConflict: 'session_id' });
+      } catch (e) {
+        // Table might not exist yet
+      }
+    };
+
+    trackSession();
+    const interval = setInterval(trackSession, 60000); 
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen selection:bg-rose-100 selection:text-rose-900 overflow-x-hidden bg-[#fdfaf6]">
       {/* Subtle Background Decorations */}
