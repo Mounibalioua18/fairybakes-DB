@@ -33,25 +33,24 @@ export const AnalyticsSection: React.FC = () => {
 
       if (liveError) throw liveError;
 
-      // 2. Today Unique (unique session_id in last 24h)
-      // Note: In some Supabase versions, 'distinct' on any column works like this:
+      // 2. Today Unique (unique session_id based on last_ping)
       const { data: todayData, error: todayError } = await supabase
         .from('site_stats')
         .select('session_id')
-        .gt('created_at', twentyFourHoursAgo);
+        .gt('last_ping', twentyFourHoursAgo);
 
       if (todayError) throw todayError;
       const todayUnique = new Set(todayData?.map(d => d.session_id)).size;
 
-      // 3. This Month Total
+      // 3. This Month Total (based on last_ping)
       const { count: monthTotal, error: monthError } = await supabase
         .from('site_stats')
         .select('*', { count: 'exact', head: true })
-        .gt('created_at', startOfMonth);
+        .gt('last_ping', startOfMonth);
 
       if (monthError) throw monthError;
 
-      // 4. Chart Data (Visits per day for last 7 days)
+      // 4. Chart Data (using last_ping for precision)
       const last7Days: { name: string; date: string; visits: number }[] = [];
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now);
@@ -64,13 +63,13 @@ export const AnalyticsSection: React.FC = () => {
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const { data: chartResults, error: chartError } = await supabase
         .from('site_stats')
-        .select('created_at')
-        .gt('created_at', sevenDaysAgo);
+        .select('last_ping')
+        .gt('last_ping', sevenDaysAgo);
 
       if (chartError) throw chartError;
 
       chartResults?.forEach((row: any) => {
-        const rowDate = row.created_at.split('T')[0];
+        const rowDate = row.last_ping.split('T')[0];
         const day = last7Days.find(d => d.date === rowDate);
         if (day) day.visits++;
       });

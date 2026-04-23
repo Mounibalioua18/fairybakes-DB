@@ -6,23 +6,33 @@ import { supabase } from './lib/supabase';
 const App: React.FC = () => {
   useEffect(() => {
     const trackSession = async () => {
-      const sessionId = localStorage.getItem('fairy_session_id') || crypto.randomUUID();
-      localStorage.setItem('fairy_session_id', sessionId);
+      // Robust session ID generation
+      let sessionId = localStorage.getItem('fairy_session_id');
+      if (!sessionId) {
+        sessionId = typeof crypto !== 'undefined' && crypto.randomUUID 
+          ? crypto.randomUUID() 
+          : Math.random().toString(36).substring(2) + Date.now().toString(36);
+        localStorage.setItem('fairy_session_id', sessionId);
+      }
       
       try {
-        await supabase
+        const { error: upsertError } = await supabase
           .from('site_stats')
           .upsert({ 
             session_id: sessionId,
             last_ping: new Date().toISOString()
-          }, { onConflict: 'session_id' });
+          });
+        
+        if (upsertError) {
+          console.warn('Analytics Ping Failed:', upsertError.message);
+        }
       } catch (e) {
-        // Table might not exist yet
+        console.error('Tracking Error:', e);
       }
     };
 
     trackSession();
-    const interval = setInterval(trackSession, 60000); 
+    const interval = setInterval(trackSession, 30000); 
     return () => clearInterval(interval);
   }, []);
 
