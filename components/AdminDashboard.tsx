@@ -24,6 +24,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleRefresh = () => {
+    loadOrders();
+    setRefreshTrigger(prev => prev + 1);
+  };
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [email, setEmail] = useState('');
@@ -971,7 +977,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                       {isFormOpen ? 'ON' : 'OFF'}
                     </button>
                   )}
-                  <button onClick={loadOrders} className={`p-2 bg-stone-50 rounded-lg text-stone-500 hover:text-stone-700 shadow-sm border border-stone-100 ${isLoading ? 'animate-spin' : ''}`}>
+                  <button onClick={handleRefresh} className={`p-2 bg-stone-50 rounded-lg text-stone-500 hover:text-stone-700 shadow-sm border border-stone-100 ${isLoading ? 'animate-spin' : ''}`}>
                     <RefreshCw size={16} />
                   </button>
                   <button onClick={handleLogout} className="p-2 bg-rose-50 rounded-lg text-rose-500 hover:text-rose-600 shadow-sm border border-rose-100">
@@ -1077,7 +1083,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   {isFormOpen ? 'Form ON' : 'Form OFF'}
                 </button>
               )}
-              <button onClick={loadOrders} className={`hidden md:block p-2 text-stone-400 hover:bg-rose-50 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}>
+              <button onClick={handleRefresh} className={`hidden md:block p-2 text-stone-400 hover:bg-rose-50 rounded-lg transition-all ${isLoading ? 'animate-spin' : ''}`}>
                 <RefreshCw size={18} />
               </button>
               <button onClick={handleLogout} className="hidden md:block p-2 text-stone-400 hover:text-rose-400 transition-all">
@@ -1279,7 +1285,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
             </div>
           ) : (
             <div className="w-full">
-              <AnalyticsSection />
+              <AnalyticsSection key={refreshTrigger} />
             </div>
           )}
         </div>
