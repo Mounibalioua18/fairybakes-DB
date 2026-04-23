@@ -139,16 +139,16 @@ export const AnalyticsSection: React.FC = () => {
           value={data?.todayUnique || 0} 
           icon={<UserCheck className="text-rose-400" />} 
           label="Last 24 Hours"
-          trend="+12%" 
-          isPositive={true}
+          trend="Daily" 
+          trendColor="neutral"
         />
         <StatCard 
           title="This Month" 
           value={data?.monthTotal || 0} 
           icon={<Calendar className="text-stone-800" />} 
           label="Total Sessions"
-          trend="+5%"
-          isPositive={true}
+          trend="Monthly"
+          trendColor="neutral"
         />
       </div>
 
@@ -237,9 +237,10 @@ const StatCard = ({ title, value, icon, label, trend, isPositive, trendColor }: 
         </div>
         <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest ${
           trendColor === 'emerald' ? 'bg-emerald-50 text-emerald-600' : 
+          trendColor === 'neutral' ? 'bg-stone-100 text-stone-500' : 
           isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'
         }`}>
-          {trendColor !== 'emerald' && (isPositive ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />)}
+          {trendColor !== 'emerald' && trendColor !== 'neutral' && (isPositive ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />)}
           {trend}
         </div>
       </div>
