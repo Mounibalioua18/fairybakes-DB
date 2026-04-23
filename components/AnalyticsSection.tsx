@@ -167,9 +167,15 @@ export const AnalyticsSection: React.FC = () => {
           </div>
         </div>
 
-        <div className="h-[280px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data?.chartData || []}>
+        <div className="h-[280px] w-full focus:outline-none">
+          <ResponsiveContainer width="100%" height="100%" className="focus:outline-none">
+            <AreaChart 
+              data={data?.chartData || []} 
+              style={{ outline: 'none' }}
+              className="outline-none select-none"
+              tabIndex={-1}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+            >
               <defs>
                 <linearGradient id="colorVisits" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#FB7185" stopOpacity={0.15}/>
