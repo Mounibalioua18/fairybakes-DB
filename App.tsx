@@ -22,7 +22,7 @@ const App: React.FC = () => {
     };
 
     trackSession();
-    const interval = setInterval(trackSession, 60000); 
+    const interval = setInterval(trackSession, 15000); // Ping every 15s for high precision
     return () => clearInterval(interval);
   }, []);
 

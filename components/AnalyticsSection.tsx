@@ -21,24 +21,24 @@ export const AnalyticsSection: React.FC = () => {
     setError(null);
     try {
       const now = new Date();
-      const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000).toISOString();
-      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+      const thirtySecondsAgo = new Date(now.getTime() - 30 * 1000).toISOString();
+      const startOfToday = new Date();
+      startOfToday.setHours(0,0,0,0);
       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-      // 1. Live Now (last_ping in last 2 minutes)
+      // 1. Live Now (last_ping in last 30 seconds)
       const { count: liveNow, error: liveError } = await supabase
         .from('site_stats')
         .select('*', { count: 'exact', head: true })
-        .gt('last_ping', twoMinutesAgo);
+        .gt('last_ping', thirtySecondsAgo);
 
       if (liveError) throw liveError;
 
-      // 2. Today Unique (unique session_id in last 24h)
-      // Note: In some Supabase versions, 'distinct' on any column works like this:
+      // 2. Today Unique (active today using last_ping)
       const { data: todayData, error: todayError } = await supabase
         .from('site_stats')
         .select('session_id')
-        .gt('created_at', twentyFourHoursAgo);
+        .gt('last_ping', startOfToday.toISOString());
 
       if (todayError) throw todayError;
       const todayUnique = new Set(todayData?.map(d => d.session_id)).size;
@@ -91,7 +91,7 @@ export const AnalyticsSection: React.FC = () => {
 
   useEffect(() => {
     fetchAnalytics();
-    const interval = setInterval(fetchAnalytics, 30000); // Refresh every 30s
+    const interval = setInterval(fetchAnalytics, 15000); // Fast refresh every 15s
     return () => clearInterval(interval);
   }, []);
 
@@ -217,26 +217,26 @@ export const AnalyticsSection: React.FC = () => {
 };
 
 const StatCard = ({ title, value, icon, label, trend, isPositive, trendColor }: any) => (
-  <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-all group overflow-hidden relative">
-    <div className="absolute top-0 right-0 w-24 h-24 bg-stone-50 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-rose-50/50 transition-colors" />
+  <div className="bg-white rounded-[1.5rem] p-4 shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-all group overflow-hidden relative">
+    <div className="absolute top-0 right-0 w-16 h-16 bg-stone-50 rounded-full blur-2xl -mr-6 -mt-6 group-hover:bg-rose-50/50 transition-colors" />
     <div className="relative z-10">
-      <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center text-xl shadow-inner border border-stone-100/50">
+      <div className="flex items-start justify-between mb-3">
+        <div className="w-8 h-8 rounded-xl bg-stone-50 flex items-center justify-center text-sm shadow-inner border border-stone-100/50">
           {icon}
         </div>
-        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+        <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest ${
           trendColor === 'emerald' ? 'bg-emerald-50 text-emerald-600' : 
           isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'
         }`}>
-          {trendColor !== 'emerald' && (isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />)}
+          {trendColor !== 'emerald' && (isPositive ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />)}
           {trend}
         </div>
       </div>
       <div>
-        <h4 className="text-[10px] uppercase tracking-widest font-black text-stone-400 mb-1">{title}</h4>
-        <div className="flex items-baseline gap-2">
-          <span className="text-4xl font-serif font-bold text-stone-900">{value}</span>
-          <span className="text-stone-400 text-xs font-light">{label}</span>
+        <h4 className="text-[9px] uppercase tracking-widest font-black text-stone-400 mb-0.5">{title}</h4>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-2xl font-serif font-bold text-stone-900">{value}</span>
+          <span className="text-stone-400 text-[10px] font-light">{label}</span>
         </div>
       </div>
     </div>
