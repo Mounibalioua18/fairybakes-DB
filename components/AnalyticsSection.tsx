@@ -107,7 +107,7 @@ export const AnalyticsSection: React.FC = () => {
   if (error) {
     return (
       <div className="p-8 text-center bg-white rounded-3xl border border-rose-100 shadow-sm max-w-lg mx-auto mt-12">
-        <Activity className="w-12 h-12 text-rose-200 mx-auto mb-4" />
+        <BarChart3 className="w-12 h-12 text-rose-200 mx-auto mb-4" />
         <h3 className="text-xl font-serif font-bold text-stone-800 mb-2">Analytics Connection Needed</h3>
         <p className="text-stone-500 text-sm mb-6 font-light leading-relaxed">
           The <code className="bg-stone-50 px-2 py-0.5 rounded text-rose-500">site_stats</code> table was not found or accessible. 
@@ -125,8 +125,8 @@ export const AnalyticsSection: React.FC = () => {
   }
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-5xl mx-auto px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <StatCard 
           title="Live Now" 
           value={data?.liveNow || 0} 
@@ -153,21 +153,21 @@ export const AnalyticsSection: React.FC = () => {
         />
       </div>
 
-      <div className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-stone-100">
-        <div className="flex items-center justify-between mb-8 px-2">
+      <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-stone-100">
+        <div className="flex items-center justify-between mb-6 px-2">
           <div>
-            <h3 className="text-2xl font-serif font-bold text-stone-900 tracking-tight">Traffic Vibes</h3>
+            <h3 className="text-xl font-serif font-bold text-stone-900 tracking-tight">Traffic Vibes</h3>
             <p className="text-[10px] uppercase tracking-widest font-bold text-stone-400 mt-1">Weekly studio activity</p>
           </div>
           <div className="flex gap-4">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-rose-400" />
-              <span className="text-[10px] uppercase tracking-widest font-bold text-stone-500">Sessions</span>
+              <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
+              <span className="text-[9px] uppercase tracking-widest font-bold text-stone-500">Sessions</span>
             </div>
           </div>
         </div>
 
-        <div className="h-[350px] w-full">
+        <div className="h-[280px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data?.chartData || []}>
               <defs>
@@ -217,26 +217,26 @@ export const AnalyticsSection: React.FC = () => {
 };
 
 const StatCard = ({ title, value, icon, label, trend, isPositive, trendColor }: any) => (
-  <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-all group overflow-hidden relative">
-    <div className="absolute top-0 right-0 w-24 h-24 bg-stone-50 rounded-full blur-3xl -mr-10 -mt-10 group-hover:bg-rose-50/50 transition-colors" />
+  <div className="bg-white rounded-[1.5rem] p-5 shadow-sm border border-stone-100 flex flex-col justify-between hover:shadow-md transition-all group overflow-hidden relative">
+    <div className="absolute top-0 right-0 w-20 h-20 bg-stone-50 rounded-full blur-3xl -mr-8 -mt-8 group-hover:bg-rose-50/50 transition-colors" />
     <div className="relative z-10">
-      <div className="flex items-start justify-between mb-4">
-        <div className="w-12 h-12 rounded-2xl bg-stone-50 flex items-center justify-center text-xl shadow-inner border border-stone-100/50">
+      <div className="flex items-start justify-between mb-3">
+        <div className="w-10 h-10 rounded-xl bg-stone-50 flex items-center justify-center text-lg shadow-inner border border-stone-100/50">
           {icon}
         </div>
-        <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+        <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-widest ${
           trendColor === 'emerald' ? 'bg-emerald-50 text-emerald-600' : 
           isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-500'
         }`}>
-          {trendColor !== 'emerald' && (isPositive ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />)}
+          {trendColor !== 'emerald' && (isPositive ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />)}
           {trend}
         </div>
       </div>
       <div>
-        <h4 className="text-[10px] uppercase tracking-widest font-black text-stone-400 mb-1">{title}</h4>
-        <div className="flex items-baseline gap-2">
-          <span className="text-4xl font-serif font-bold text-stone-900">{value}</span>
-          <span className="text-stone-400 text-xs font-light">{label}</span>
+        <h4 className="text-[9px] uppercase tracking-widest font-black text-stone-400 mb-0.5">{title}</h4>
+        <div className="flex items-baseline gap-1.5">
+          <span className="text-3xl font-serif font-bold text-stone-900">{value}</span>
+          <span className="text-stone-400 text-[10px] font-light">{label}</span>
         </div>
       </div>
     </div>

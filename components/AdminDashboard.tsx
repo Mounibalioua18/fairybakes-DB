@@ -946,7 +946,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
               <div className="flex items-center justify-between w-full md:w-auto">
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-rose-50 rounded-lg md:rounded-xl flex items-center justify-center text-rose-400 shadow-sm border border-rose-100 shrink-0">
-                    {activeTab === 'portfolio' ? <ImageIcon size={18} /> : <Package size={18} />}
+                    {activeTab === 'portfolio' ? <ImageIcon size={18} /> : activeTab === 'status' ? <BarChart3 size={18} /> : <Package size={18} />}
                   </div>
                   {(activeTab !== 'portfolio' && activeTab !== 'status') && (
                     <span className="bg-stone-900 text-white text-[9px] md:text-[11px] px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold shadow-sm">
