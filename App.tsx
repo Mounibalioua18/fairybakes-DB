@@ -1,41 +1,8 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AdminDashboard } from './components/AdminDashboard';
-import { supabase } from './lib/supabase';
 
 const App: React.FC = () => {
-  useEffect(() => {
-    const trackSession = async () => {
-      // Robust session ID generation
-      let sessionId = localStorage.getItem('fairy_session_id');
-      if (!sessionId) {
-        sessionId = typeof crypto !== 'undefined' && crypto.randomUUID 
-          ? crypto.randomUUID() 
-          : Math.random().toString(36).substring(2) + Date.now().toString(36);
-        localStorage.setItem('fairy_session_id', sessionId);
-      }
-      
-      try {
-        const { error: upsertError } = await supabase
-          .from('site_stats')
-          .upsert({ 
-            session_id: sessionId,
-            last_ping: new Date().toISOString()
-          });
-        
-        if (upsertError) {
-          console.warn('Analytics Ping Failed:', upsertError.message);
-        }
-      } catch (e) {
-        console.error('Tracking Error:', e);
-      }
-    };
-
-    trackSession();
-    const interval = setInterval(trackSession, 30000); 
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="min-h-screen selection:bg-rose-100 selection:text-rose-900 overflow-x-hidden bg-[#fdfaf6]">
       {/* Subtle Background Decorations */}
