@@ -28,7 +28,7 @@ export const AnalyticsSection: React.FC = () => {
       if (fetchError) throw fetchError;
 
       const now = new Date();
-      const twoMinutesAgoMs = now.getTime() - 2 * 60 * 1000;
+      const oneMinuteAgoMs = now.getTime() - 1 * 60 * 1000;
       const twentyFourHoursAgoMs = now.getTime() - 24 * 60 * 60 * 1000;
       const thirtyDaysAgoMs = now.getTime() - 30 * 24 * 60 * 60 * 1000;
 
@@ -54,7 +54,7 @@ export const AnalyticsSection: React.FC = () => {
 
         if (pingMs >= thirtyDaysAgoMs) monthTotalCount++;
         if (pingMs >= twentyFourHoursAgoMs) todayUniqueKeys.add(row.session_id);
-        if (pingMs >= twoMinutesAgoMs) liveNowCount++;
+        if (pingMs >= oneMinuteAgoMs) liveNowCount++;
 
         // Fill chart
         const rowDateStr = pingDate.toISOString().split('T')[0];
