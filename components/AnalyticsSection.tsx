@@ -20,37 +20,23 @@ export const AnalyticsSection: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
+      // Fetch ALL rows unconditionally
+      const { data: allData, error: fetchError } = await supabase
+        .from('site_stats')
+        .select('session_id, last_ping');
+
+      if (fetchError) throw fetchError;
+
       const now = new Date();
-      const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000).toISOString();
-      const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+      const twoMinutesAgoMs = now.getTime() - 2 * 60 * 1000;
+      const twentyFourHoursAgoMs = now.getTime() - 24 * 60 * 60 * 1000;
+      const thirtyDaysAgoMs = now.getTime() - 30 * 24 * 60 * 60 * 1000;
 
-      // 1. Live Now (last_ping in last 2 minutes)
-      const { count: liveNow, error: liveError } = await supabase
-        .from('site_stats')
-        .select('*', { count: 'exact', head: true })
-        .gt('last_ping', twoMinutesAgo);
+      let liveNowCount = 0;
+      let monthTotalCount = 0;
+      const todayUniqueKeys = new Set<string>();
 
-      if (liveError) throw liveError;
-
-      // 2. Today Unique (unique session_id based on last_ping)
-      const { data: todayData, error: todayError } = await supabase
-        .from('site_stats')
-        .select('session_id')
-        .gt('last_ping', twentyFourHoursAgo);
-
-      if (todayError) throw todayError;
-      const todayUnique = new Set(todayData?.map(d => d.session_id)).size;
-
-      // 3. This Month Total (based on last_ping)
-      const { count: monthTotal, error: monthError } = await supabase
-        .from('site_stats')
-        .select('*', { count: 'exact', head: true })
-        .gt('last_ping', startOfMonth);
-
-      if (monthError) throw monthError;
-
-      // 4. Chart Data (using last_ping for precision)
+      // Prepare Chart Data array (Last 7 days)
       const last7Days: { name: string; date: string; visits: number }[] = [];
       for (let i = 6; i >= 0; i--) {
         const d = new Date(now);
@@ -60,24 +46,28 @@ export const AnalyticsSection: React.FC = () => {
         last7Days.push({ name: dayLabel, date: dateStr, visits: 0 });
       }
 
-      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      const { data: chartResults, error: chartError } = await supabase
-        .from('site_stats')
-        .select('last_ping')
-        .gt('last_ping', sevenDaysAgo);
+      // Filter locally based ONLY on last_ping
+      (allData || []).forEach(row => {
+        if (!row.last_ping) return;
+        const pingDate = new Date(row.last_ping);
+        const pingMs = pingDate.getTime();
 
-      if (chartError) throw chartError;
+        if (pingMs >= thirtyDaysAgoMs) monthTotalCount++;
+        if (pingMs >= twentyFourHoursAgoMs) todayUniqueKeys.add(row.session_id);
+        if (pingMs >= twoMinutesAgoMs) liveNowCount++;
 
-      chartResults?.forEach((row: any) => {
-        const rowDate = row.last_ping.split('T')[0];
-        const day = last7Days.find(d => d.date === rowDate);
-        if (day) day.visits++;
+        // Fill chart
+        const rowDateStr = pingDate.toISOString().split('T')[0];
+        const dayMatch = last7Days.find(d => d.date === rowDateStr);
+        if (dayMatch) {
+          dayMatch.visits++;
+        }
       });
 
       setData({
-        liveNow: liveNow || 0,
-        todayUnique,
-        monthTotal: monthTotal || 0,
+        liveNow: liveNowCount,
+        todayUnique: todayUniqueKeys.size,
+        monthTotal: monthTotalCount,
         chartData: last7Days.map(({ name, visits }) => ({ name, visits }))
       });
     } catch (err: any) {
