@@ -11,7 +11,7 @@ const App: React.FC = () => {
       
       try {
         await supabase
-          .from('site_analytics')
+          .from('site_stats')
           .upsert({ 
             session_id: sessionId,
             last_ping: new Date().toISOString()

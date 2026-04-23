@@ -27,7 +27,7 @@ export const AnalyticsSection: React.FC = () => {
 
       // 1. Live Now (last_ping in last 2 minutes)
       const { count: liveNow, error: liveError } = await supabase
-        .from('site_analytics')
+        .from('site_stats')
         .select('*', { count: 'exact', head: true })
         .gt('last_ping', twoMinutesAgo);
 
@@ -36,7 +36,7 @@ export const AnalyticsSection: React.FC = () => {
       // 2. Today Unique (unique session_id in last 24h)
       // Note: In some Supabase versions, 'distinct' on any column works like this:
       const { data: todayData, error: todayError } = await supabase
-        .from('site_analytics')
+        .from('site_stats')
         .select('session_id')
         .gt('created_at', twentyFourHoursAgo);
 
@@ -45,7 +45,7 @@ export const AnalyticsSection: React.FC = () => {
 
       // 3. This Month Total
       const { count: monthTotal, error: monthError } = await supabase
-        .from('site_analytics')
+        .from('site_stats')
         .select('*', { count: 'exact', head: true })
         .gt('created_at', startOfMonth);
 
@@ -63,7 +63,7 @@ export const AnalyticsSection: React.FC = () => {
 
       const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
       const { data: chartResults, error: chartError } = await supabase
-        .from('site_analytics')
+        .from('site_stats')
         .select('created_at')
         .gt('created_at', sevenDaysAgo);
 
@@ -83,7 +83,7 @@ export const AnalyticsSection: React.FC = () => {
       });
     } catch (err: any) {
       console.error('Analytics Error:', err);
-      setError(err.message || 'Failed to connect to site_analytics table');
+      setError(err.message || 'Failed to connect to site_stats table');
     } finally {
       setIsLoading(false);
     }
@@ -110,7 +110,7 @@ export const AnalyticsSection: React.FC = () => {
         <Activity className="w-12 h-12 text-rose-200 mx-auto mb-4" />
         <h3 className="text-xl font-serif font-bold text-stone-800 mb-2">Analytics Connection Needed</h3>
         <p className="text-stone-500 text-sm mb-6 font-light leading-relaxed">
-          The <code className="bg-stone-50 px-2 py-0.5 rounded text-rose-500">site_analytics</code> table was not found or accessible. 
+          The <code className="bg-stone-50 px-2 py-0.5 rounded text-rose-500">site_stats</code> table was not found or accessible. 
           Please ensure the table exists in your Supabase project with columns: 
           <code className="block mt-2 text-[10px] text-stone-400 font-mono">session_id, last_ping, created_at</code>
         </p>
