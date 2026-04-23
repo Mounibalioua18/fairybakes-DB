@@ -948,7 +948,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-rose-50 rounded-lg md:rounded-xl flex items-center justify-center text-rose-400 shadow-sm border border-rose-100 shrink-0">
                     {activeTab === 'portfolio' ? <ImageIcon size={18} /> : <Package size={18} />}
                   </div>
-                  {activeTab !== 'portfolio' && (
+                  {(activeTab !== 'portfolio' && activeTab !== 'status') && (
                     <span className="bg-stone-900 text-white text-[9px] md:text-[11px] px-2 md:px-2.5 py-0.5 md:py-1 rounded-full font-bold shadow-sm">
                       {activeTab === 'schedule' ? filteredOrders.length : filteredTaobSignUps.length}
                     </span>
@@ -1050,7 +1050,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose }) => {
                 </div>
               )}
 
-              {activeTab !== 'portfolio' && (
+              {(activeTab !== 'portfolio' && activeTab !== 'status') && (
                 <div className="relative flex-1 md:w-64">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-300" size={12} />
                   <input 
