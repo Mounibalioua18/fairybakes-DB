@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { CakeOrder } from '../types';
-import { Trash2, User, Search, RefreshCw, Package, X, Calendar, LogOut, ChevronDown, Instagram, Maximize2, Filter, Check, Image as ImageIcon, ExternalLink, Mail, Lock, StickyNote, Save, Edit3, Plus, ImagePlus, Loader2 } from 'lucide-react';
+import { Trash2, User, Search, RefreshCw, Package, X, Calendar, LogOut, ChevronDown, Instagram, Maximize2, Filter, Check, Image as ImageIcon, ExternalLink, Mail, Lock, StickyNote, Save, Edit3, Plus, ImagePlus, Loader2, BarChart3 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { PortfolioManager } from './PortfolioManager';
 import { AnalyticsSection } from './AnalyticsSection';
