@@ -188,15 +188,19 @@ export const AnalyticsSection: React.FC = () => {
                 axisLine={false} 
                 tickLine={false} 
                 tick={{ fontSize: 10, fontWeight: 700, fill: '#A8A29E' }}
+                allowDecimals={false}
               />
               <Tooltip 
-                contentStyle={{ 
-                  borderRadius: '1rem', 
-                  border: 'none', 
-                  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-                  fontSize: '12px',
-                  fontWeight: 'bold',
-                  fontFamily: 'serif'
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-stone-900 text-white p-3 rounded-2xl shadow-xl border border-white/10 animate-in fade-in zoom-in-95 duration-200">
+                        <p className="text-[10px] uppercase tracking-widest font-black text-rose-300 mb-1">{payload[0].payload.name}</p>
+                        <p className="text-lg font-serif font-bold">{payload[0].value} <span className="text-xs font-sans font-normal text-stone-400">Visits</span></p>
+                      </div>
+                    );
+                  }
+                  return null;
                 }}
               />
               <Area 
@@ -207,6 +211,8 @@ export const AnalyticsSection: React.FC = () => {
                 fillOpacity={1} 
                 fill="url(#colorVisits)" 
                 animationDuration={1500}
+                dot={{ fill: '#FB7185', strokeWidth: 2, r: 4, stroke: '#fff' }}
+                activeDot={{ r: 6, strokeWidth: 0 }}
               />
             </AreaChart>
           </ResponsiveContainer>
